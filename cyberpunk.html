@@ -141,7 +141,7 @@ footer .rd{color:var(--red)}
 .home:hover{color:var(--red);border-color:var(--red)}
 
 /* boot loader */
-.boot{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.boot{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;transition:opacity .6s ease}
 .boot .bt{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--mut);text-transform:uppercase}
 .boot .pct{font-family:var(--disp);font-size:64px;color:#fff}
 .boot .pct span{color:var(--red)}
@@ -261,14 +261,19 @@ const bootTimer=setInterval(()=>{
   bootlabel.textContent=bootSteps[Math.min(bootSteps.length-1,Math.floor(bp/20))];
   if(bp>=100){clearInterval(bootTimer);finishBoot();}
 },130);
+let booted=false;
 function finishBoot(){
-  gsap.to(boot,{opacity:0,duration:.6,delay:.2,onComplete:()=>{boot.style.display='none';startHero();revealAll();}});
+  if(booted)return;booted=true;
+  // CSS-transition fade (timer-driven, independent of rAF/GSAP ticker)
+  boot.style.opacity='0';
+  setTimeout(()=>{boot.style.display='none';},700);
+  startHero();revealAll();
 }
 
 /* ================= three.js particle hero ================= */
 const canvas=document.getElementById('gl');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.setSize(innerWidth,innerHeight);
 const scene=new THREE.Scene();
 scene.fog=new THREE.FogExp2(0x070708,0.06);
@@ -394,6 +399,13 @@ function loop(t){
   frames++;if(t-fpsT>500){const fps=Math.round(frames*1000/(t-fpsT));document.getElementById('hud-fps').textContent=fps;frames=0;fpsT=t;}
 }
 buildParticles();
+// debug hook: force a synchronous frame (used to verify render when rAF is paused)
+window.__exo={
+  step:(n)=>{for(let i=0;i<(n||1);i++){updateParticles(performance.now());}composer.render();},
+  setAssemble:(v)=>{assemble=v;},
+  setShatter:(v)=>{shatter=v;},
+  info:()=>({count,assemble,shatter})
+};
 // ensure font loaded then rebuild for crisp sampling
 document.fonts.ready.then(()=>{document.fonts.load("300px 'Pirata One'").then(()=>{
   scene.remove(points);scene.remove(reflect);buildParticles();});});
