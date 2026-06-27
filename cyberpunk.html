@@ -272,7 +272,7 @@ function finishBoot(){
 
 /* ================= three.js particle hero ================= */
 const canvas=document.getElementById('gl');
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,preserveDrawingBuffer:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.setSize(innerWidth,innerHeight);
 const scene=new THREE.Scene();
@@ -289,7 +289,7 @@ function sampleWord(word){
   while(x.measureText(word).width>1480 && size>40){size-=10;x.font=`${size}px 'Pirata One'`;}
   x.fillText(word,800,225);
   const d=x.getImageData(0,0,1600,420).data;
-  const pts=[];const step=4;
+  const pts=[];const step=3;
   for(let y=0;y<420;y+=step)for(let xx=0;xx<1600;xx+=step){
     if(d[(y*1600+xx)*4+3]>120){
       pts.push([(xx-800)/52,(210-y)/52,(Math.random()-0.5)*0.6]);
@@ -329,7 +329,7 @@ function buildParticles(){
   geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
   geo.setAttribute('color',new THREE.BufferAttribute(col,3));
   const sprite=makeSprite();
-  const mat=new THREE.PointsMaterial({size:0.085,map:sprite,vertexColors:true,
+  const mat=new THREE.PointsMaterial({size:0.12,map:sprite,vertexColors:true,
     transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:1});
   points=new THREE.Points(geo,mat);scene.add(points);
   // reflection
