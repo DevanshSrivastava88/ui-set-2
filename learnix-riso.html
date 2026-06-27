@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Learnix · 10 Vibes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+@property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
+:root{
+  --ink:#f4f5fb;--mut:#a6abc4;--dim:#6b7088;
+  --glass:rgba(255,255,255,.05);--glass-strong:rgba(255,255,255,.085);
+  --stroke:rgba(255,255,255,.12);--stroke-bright:rgba(255,255,255,.28);
+  --accent:#6f73b2;--acc2:#9468b0;--acc3:#5fa6bf;--acc4:#c47a96;
+  --f:"Inter",system-ui,-apple-system,sans-serif;--mono:"Space Mono",monospace;
+  --ooze:linear-gradient(135deg,#5fa6bf,#6f73b2,#9468b0);
+  --ring:conic-gradient(from var(--a),#5fa6bf,#6f73b2,#9468b0,#c47a96,#5fa6bf);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#05060c;color:var(--ink);font-family:var(--f);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--acc2);color:#fff}
+
+/* ============ VIBE BACKGROUND SYSTEM ============ */
+#vibe{position:fixed;inset:0;z-index:0;overflow:hidden}
+.vl{position:absolute;inset:0;opacity:0;transition:opacity .7s ease;pointer-events:none}
+/* show active */
+body[data-vibe="aurora"] .v-aurora,
+body[data-vibe="mural"] .v-mural,
+body[data-vibe="flow"] .v-flow,
+body[data-vibe="nebula"] .v-nebula,
+body[data-vibe="topo"] .v-topo,
+body[data-vibe="seigaiha"] .v-seigaiha,
+body[data-vibe="bauhaus"] .v-bauhaus,
+body[data-vibe="riso"] .v-riso,
+body[data-vibe="deco"] .v-deco,
+body[data-vibe="ink"] .v-ink{opacity:1}
+/* global darken so glass always reads */
+#vibe::after{content:"";position:absolute;inset:0;background:rgba(5,6,12,.5);z-index:50;pointer-events:none}
+
+/* 1 AURORA (refined psychedelic) */
+.v-aurora .blob{position:absolute;border-radius:50%;filter:blur(95px);opacity:.34;mix-blend-mode:screen;will-change:transform;animation:drift 24s ease-in-out infinite}
+.v-aurora .b1{width:60vw;height:60vw;background:radial-gradient(circle,#58609b,transparent 62%);top:-15vw;left:-10vw}
+.v-aurora .b2{width:55vw;height:55vw;background:radial-gradient(circle,#8655a6,transparent 62%);bottom:-18vw;right:-8vw;animation-delay:-6s}
+.v-aurora .b3{width:48vw;height:48vw;background:radial-gradient(circle,#4f93a5,transparent 62%);bottom:-10vw;left:20vw;animation-delay:-12s}
+.v-aurora .b4{width:42vw;height:42vw;background:radial-gradient(circle,#b56d86,transparent 62%);top:0;right:12vw;animation-delay:-18s}
+.v-aurora .b5{width:38vw;height:38vw;background:radial-gradient(circle,#6f5a9c,transparent 62%);top:38%;left:42%;animation-delay:-9s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(7vw,-5vh) scale(1.18)}50%{transform:translate(-6vw,8vh) scale(.88)}75%{transform:translate(5vw,6vh) scale(1.1)}}
+
+/* 2 HAND-DRAWN MURAL */
+.v-mural{background:#0b0d12;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23c9a24b' stroke-width='1' stroke-opacity='0.16' stroke-linecap='round'%3E%3Cpath d='M20 90 q35 -55 70 0 t70 0'/%3E%3Cpath d='M0 140 q45 -34 90 0 t90 0'/%3E%3Ccircle cx='46' cy='44' r='16'/%3E%3Cpath d='M130 34 l26 26 M156 34 l-26 26'/%3E%3Cpath d='M24 168 v-22 M34 168 v-34 M44 168 v-22'/%3E%3Cpath d='M150 120 q14 -20 28 0 q-14 20 -28 0'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:200px 200px}
+.v-mural::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 0%,transparent 38%,#0b0d12 100%)}
+
+/* 3 FLOW-FIELD (canvas) */
+.v-flow{background:#07090f}
+.v-flow canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* 4 NEBULA */
+.v-nebula{background:#03040a;background-image:radial-gradient(40vmax 30vmax at 25% 35%,rgba(120,60,200,.28),transparent 60%),radial-gradient(45vmax 35vmax at 75% 65%,rgba(40,120,220,.24),transparent 60%),radial-gradient(30vmax 30vmax at 60% 20%,rgba(220,80,160,.16),transparent 60%)}
+.v-nebula canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* 5 TOPOGRAPHIC */
+.v-topo{background:#0a1014;
+  background-image:repeating-radial-gradient(circle at 25% 30%,transparent 0 20px,rgba(95,190,170,.09) 20px 21px),repeating-radial-gradient(circle at 82% 76%,transparent 0 24px,rgba(120,150,210,.07) 24px 25px);
+  animation:topodrift 40s linear infinite}
+@keyframes topodrift{to{background-position:120px 90px,-120px -90px}}
+
+/* 6 SEIGAIHA */
+.v-seigaiha{background:#0a1626;--c:#27567f;
+  background-image:radial-gradient(circle at 50% 100%,transparent 33%,var(--c) 34% 40%,transparent 41%),radial-gradient(circle at 50% 100%,transparent 53%,#c9a24b55 54% 60%,transparent 61%),radial-gradient(circle at 50% 100%,transparent 73%,var(--c) 74% 80%,transparent 81%);
+  background-size:64px 32px}
+
+/* 7 BAUHAUS */
+.v-bauhaus{background:#100f0c}
+.v-bauhaus::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 16% 26%,#a83a3a 0 100px,transparent 101px),conic-gradient(from 0deg at 80% 20%,#b89a3a 0 90deg,transparent 0),linear-gradient(45deg,transparent 48.5%,#3a6f8c 48.5% 51.5%,transparent 51.5%),radial-gradient(circle at 72% 82%,transparent 64px,#3a8c7e 65px 69px,transparent 70px);
+  background-repeat:no-repeat;background-size:cover,cover,340px 340px,cover;opacity:.5}
+
+/* 8 RISOGRAPH */
+.v-riso{background:#141018}
+.v-riso .blob{position:absolute;width:72vmax;height:72vmax;border-radius:50%;filter:blur(46px);mix-blend-mode:screen;opacity:.6}
+.v-riso .r1{background:radial-gradient(circle at 35% 40%,#c45470,transparent 60%);left:-12%;top:-10%}
+.v-riso .r2{background:radial-gradient(circle at 65% 60%,#3a6fa5,transparent 60%);right:-12%;bottom:-10%}
+.v-riso .g{position:absolute;inset:0;filter:url(#grain);opacity:.26;mix-blend-mode:overlay}
+.v-riso::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,.4) 1px,transparent 1.7px);background-size:7px 7px;opacity:.22;mix-blend-mode:multiply}
+
+/* 9 ART-DECO GOLD */
+.v-deco{background:#0c0c10;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='130' viewBox='0 0 130 130'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='1.1' stroke-opacity='0.4'%3E%3Cpath d='M65 4 L126 65 L65 126 L4 65 Z'/%3E%3Cpath d='M65 26 L104 65 L65 104 L26 65 Z'/%3E%3Cpath d='M65 46 L84 65 L65 84 L46 65 Z'/%3E%3Ccircle cx='65' cy='65' r='3' fill='%23c9a227' stroke='none'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:130px 130px}
+.v-deco::before{content:"";position:absolute;inset:0;background:radial-gradient(130% 100% at 50% 50%,transparent 52%,#0c0c10 100%)}
+
+/* 10 INK-WASH */
+.v-ink{background:radial-gradient(120% 120% at 30% 20%,#16161a,#050507)}
+.v-ink .ib{position:absolute;border-radius:50%;filter:url(#ink);opacity:.5}
+.v-ink .i1{width:55vmax;height:45vmax;left:6%;top:10%;background:radial-gradient(circle,#2c2c34 0 40%,transparent 70%)}
+.v-ink .i2{width:48vmax;height:50vmax;right:5%;bottom:6%;background:radial-gradient(circle,#23232b 0 38%,transparent 70%)}
+
+/* ============ VIBE PICKER ============ */
+.picker{display:none;position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:40;display:none;align-items:center;gap:4px;
+  padding:7px 9px;border-radius:22px;background:rgba(12,13,18,.6);backdrop-filter:blur(20px) saturate(1.3);-webkit-backdrop-filter:blur(20px) saturate(1.3);
+  border:1px solid var(--stroke);box-shadow:0 14px 40px rgba(0,0,0,.5),inset 0 1px 0 var(--stroke-bright);max-width:94vw;overflow-x:auto;scrollbar-width:none}
+.picker::-webkit-scrollbar{display:none}
+.picker .chip{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);
+  padding:8px 12px;border-radius:14px;cursor:pointer;transition:.2s;white-space:nowrap;border:1px solid transparent}
+.picker .chip:hover{color:#fff;background:rgba(255,255,255,.06)}
+.picker .chip.on{color:#fff;background:linear-gradient(135deg,rgba(111,115,178,.5),rgba(148,104,176,.4));border-color:var(--stroke-bright)}
+.picker .chip b{color:var(--acc3);margin-right:5px}
+
+.cursorglow{position:fixed;width:440px;height:440px;border-radius:50%;z-index:1;pointer-events:none;background:radial-gradient(circle,rgba(124,131,255,.1),transparent 60%);transform:translate(-50%,-50%);left:50%;top:30%;filter:blur(8px);will-change:transform}
+.grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.04;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.shell{position:relative;z-index:5;display:grid;grid-template-columns:84px 1fr;min-height:100vh}
+.dock{position:fixed;top:50%;left:18px;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:6px;padding:12px 9px;border-radius:26px;background:var(--glass);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--stroke);box-shadow:0 20px 50px rgba(0,0,0,.5),inset 0 1px 0 var(--stroke-bright)}
+.dock .logo{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;font-weight:800;font-size:20px;color:#fff;background:linear-gradient(135deg,var(--accent),var(--acc2));box-shadow:0 8px 22px rgba(111,115,178,.5),inset 0 1px 1px rgba(255,255,255,.4);margin-bottom:8px;animation:logowob 6s ease-in-out infinite}
+@keyframes logowob{50%{border-radius:22px 16px 22px 16px;transform:rotate(6deg)}}
+.dock a{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:19px;color:var(--mut);text-decoration:none;position:relative;transition:.22s;cursor:pointer}
+.dock a:hover{color:#fff;background:var(--glass-strong);transform:translateY(-2px)}
+.dock a.on{color:#fff;background:linear-gradient(135deg,rgba(111,115,178,.35),rgba(148,104,176,.25));box-shadow:inset 0 1px 0 var(--stroke-bright)}
+
+.main{grid-column:2;padding:34px 46px 70px;max-width:1280px;margin:0 auto;width:100%}
+@media(max-width:880px){.shell{grid-template-columns:1fr}.main{grid-column:1;padding:70px 16px 90px}.dock{flex-direction:row;left:50%;top:auto;bottom:14px;transform:translateX(-50%)}}
+
+.top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px}
+.hello .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.hello h1{font-size:clamp(28px,3.4vw,40px);font-weight:800;letter-spacing:-.025em;line-height:1.05}
+.hello h1 .g{background:linear-gradient(100deg,#fff,var(--acc3),var(--acc2),#fff);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220%;animation:hue 7s linear infinite}
+@keyframes hue{to{background-position:220%}}
+.hello p{color:var(--mut);font-size:14px;margin-top:7px}
+
+.card{position:relative;border-radius:26px;transition:transform .25s cubic-bezier(.2,.8,.3,1);transform-style:preserve-3d}
+.card::after{content:"";position:absolute;inset:-2px;border-radius:inherit;z-index:0;background:var(--ooze);filter:blur(24px);opacity:0;transform:scale(.9);transition:opacity .5s ease,transform .5s ease;will-change:opacity,transform;pointer-events:none}
+.card:hover::after{opacity:.5;transform:scale(1.06)}
+.glass{position:relative;z-index:1;border-radius:inherit;overflow:hidden;contain:paint;background:var(--glass);backdrop-filter:blur(17px) saturate(1.5);-webkit-backdrop-filter:blur(17px) saturate(1.5);border:1px solid var(--stroke);box-shadow:0 22px 56px rgba(0,0,0,.45),inset 0 1px 0 var(--stroke-bright),inset 0 0 38px rgba(255,255,255,.022)}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.10),transparent 42%);z-index:6}
+.ring-fx::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;z-index:5;pointer-events:none;background:var(--ring);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;opacity:0;transition:opacity .4s;animation:spin 5s linear infinite;animation-play-state:paused}
+.card:hover .ring-fx::after{opacity:.55;animation-play-state:running}
+@keyframes spin{to{--a:360deg}}
+.sheen{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(360px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.13),transparent 45%);z-index:5}
+.card:hover .sheen{opacity:1}
+.cardbody{position:relative;z-index:4}
+
+.fx-foil{position:absolute;inset:-30%;z-index:1;pointer-events:none;mix-blend-mode:soft-light;opacity:.5;background:conic-gradient(from 0deg,#c47a96,#5fa6bf,#9468b0,#82b89a,#c47a96);filter:saturate(1.2);animation:foilspin 16s linear infinite;will-change:transform}
+@keyframes foilspin{to{transform:rotate(1turn)}}
+.fx-plasma{position:absolute;inset:0;z-index:1;pointer-events:none;filter:url(#goo);opacity:.28;mix-blend-mode:screen}
+.fx-plasma i{position:absolute;width:80px;height:80px;border-radius:50%;will-change:transform}
+.fx-plasma i:nth-child(1){background:radial-gradient(circle at 30% 30%,#8cc6d1,#4f6f9e);left:-5%;top:40%;animation:orbit1 8s ease-in-out infinite}
+.fx-plasma i:nth-child(2){background:radial-gradient(circle,#9468b0,#6f73b2);left:55%;top:55%;animation:orbit2 10s ease-in-out infinite}
+.fx-plasma i:nth-child(3){background:radial-gradient(circle,#5fa6bf,#82b89a);left:30%;top:70%;animation:orbit3 9s ease-in-out infinite}
+@keyframes orbit1{50%{transform:translate(180px,-40px) scale(1.3)}}
+@keyframes orbit2{50%{transform:translate(-90px,-50px) scale(.8)}}
+@keyframes orbit3{50%{transform:translate(60px,-60px) scale(1.2)}}
+.fx-wave{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.24;mix-blend-mode:screen;background:linear-gradient(60deg,transparent,rgba(95,166,191,.4),transparent 60%),linear-gradient(120deg,transparent 40%,rgba(148,104,176,.45),transparent 80%);background-size:300% 300%,300% 300%;animation:wave 9s ease-in-out infinite}
+@keyframes wave{0%,100%{background-position:0% 50%,100% 50%}50%{background-position:100% 50%,0% 50%}}
+.fx-blob{position:absolute;width:150px;height:150px;z-index:1;pointer-events:none;left:0;top:0;opacity:.3;mix-blend-mode:screen;filter:blur(14px);background:radial-gradient(circle,#c47a96,#9468b0 50%,transparent 70%);border-radius:46% 54% 60% 40%/52% 48% 52% 48%;animation:morph 6s ease-in-out infinite;will-change:transform}
+@keyframes morph{50%{border-radius:60% 40% 45% 55%/40% 60% 45% 55%}}
+
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.gridplan{display:grid;grid-template-columns:1.6fr 1fr;gap:20px}
+.gridtri{display:grid;grid-template-columns:1.2fr .9fr .9fr;gap:20px}
+@media(max-width:880px){.grid2,.grid3,.gridplan,.gridtri{grid-template-columns:1fr}}
+.mt{margin-top:20px}
+.sect{display:flex;align-items:baseline;justify-content:space-between;margin:32px 0 14px}
+.sect h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.sect .link{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--mut);text-transform:uppercase;cursor:pointer}
+.streak{padding:13px 20px;display:flex;align-items:center;gap:13px}
+.streak .flame{font-size:30px;filter:drop-shadow(0 0 10px #c28a5a);animation:flicker 1.6s ease-in-out infinite;position:relative;z-index:4}
+@keyframes flicker{50%{transform:scale(1.12) rotate(-3deg)}}
+.streak .n{font-size:26px;font-weight:800;line-height:1}.streak .l{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--mut);text-transform:uppercase}
+.focus{padding:30px;display:flex;gap:30px;align-items:center}
+.ring{position:relative;width:172px;height:172px;flex:none}.ring svg{transform:rotate(-90deg)}
+.ring .label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .time{font-size:34px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ring .sub{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mut);text-transform:uppercase;margin-top:3px}
+.focus .tag{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc3);margin-bottom:10px}
+.focus h2{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.focus .desc{color:var(--mut);font-size:14px;line-height:1.55;margin-bottom:18px}
+.btnrow{display:flex;gap:10px}
+.btn{font-size:13px;font-weight:600;padding:12px 20px;border-radius:14px;border:1px solid var(--stroke);cursor:pointer;background:var(--glass-strong);color:var(--ink);transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--acc2));border:none;color:#fff;box-shadow:0 10px 26px rgba(111,115,178,.45)}
+.suggest{padding:26px;display:flex;flex-direction:column;justify-content:space-between;min-height:218px}
+.suggest .tag{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#fff;margin-bottom:14px}
+.suggest h3{font-size:20px;font-weight:700;line-height:1.2;margin-bottom:8px}
+.suggest p{color:var(--mut);font-size:13px;line-height:1.5}
+.suggest .pill{margin-top:18px;align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:8px 14px;border-radius:20px;background:rgba(255,255,255,.12);border:1px solid var(--stroke);color:#fff}
+.goal{padding:22px;cursor:pointer}
+.goal .gtop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.goal .gname{font-size:16px;font-weight:700;line-height:1.25}
+.goal .due{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);margin-top:5px}
+.mini-ring{width:46px;height:46px;flex:none;position:relative}.mini-ring svg{transform:rotate(-90deg)}
+.mini-ring .pc{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;font-weight:700}
+.goal .bar{height:6px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:4px}
+.goal .bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--acc3),var(--acc2))}
+.goal .gfoot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mut);text-transform:uppercase}
+.chip{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.chip.go{background:rgba(95,166,191,.16);color:#a9d6e2;border:1px solid rgba(95,166,191,.3)}
+.chip.rev{background:rgba(196,122,150,.16);color:#e2b3c6;border:1px solid rgba(196,122,150,.3)}
+.plan{padding:24px}.plan h4{font-size:16px;font-weight:700;margin-bottom:16px}
+.tl{display:flex;flex-direction:column;gap:2px}
+.tlrow{display:flex;align-items:center;gap:14px;padding:11px 12px;border-radius:14px;transition:.2s}
+.tlrow:hover{background:rgba(255,255,255,.05)}
+.tlrow .t{font-family:var(--mono);font-size:11px;color:var(--dim);width:54px;flex:none}
+.tlrow .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--acc3);box-shadow:0 0 8px var(--acc3)}
+.tlrow.done .dot{background:#82b89a;box-shadow:0 0 8px #82b89a}.tlrow.now .dot{background:var(--acc4);box-shadow:0 0 10px var(--acc4);animation:flicker 1.4s infinite}
+.tlrow .tx{font-size:14px;font-weight:500}.tlrow.done .tx{color:var(--mut);text-decoration:line-through}
+.tlrow .tg{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--dim);text-transform:uppercase}
+.mom{padding:24px}.mom h4{font-size:15px;font-weight:600;margin-bottom:4px}
+.mom .hsub{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
+.bars{display:flex;align-items:flex-end;gap:9px;height:120px}
+.bars i{flex:1;border-radius:7px 7px 4px 4px;background:linear-gradient(180deg,var(--acc3),var(--acc2));opacity:.8;transition:.25s}
+.bars i:hover{opacity:1;filter:brightness(1.25)}
+.barlabels{display:flex;gap:9px;margin-top:8px}.barlabels span{flex:1;text-align:center;font-family:var(--mono);font-size:9px;color:var(--dim)}
+.quiz{padding:24px}
+.qitem{display:flex;align-items:center;justify-content:space-between;padding:13px 12px;border-bottom:1px solid rgba(255,255,255,.06)}
+.qitem:last-child{border-bottom:0}
+.qname{font-size:14px;font-weight:500;position:relative;transition:.15s}
+.qitem:hover .qname{text-shadow:1.5px 0 var(--acc4),-1.5px 0 var(--acc3);animation:glitch .4s steps(2) 1}
+.qitem:hover{background:linear-gradient(90deg,rgba(111,115,178,.08),transparent);border-radius:12px}
+@keyframes glitch{0%{transform:translate(0)}25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-1px)}100%{transform:translate(0)}}
+.qmeta{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em;margin-top:3px}
+.score{font-family:var(--mono);font-weight:700;font-size:13px;padding:6px 12px;border-radius:12px}
+.score.hi{background:rgba(95,166,191,.16);color:#a9d6e2}.score.mid{background:rgba(111,115,178,.18);color:#bcbfe6}.score.lo{background:rgba(196,122,150,.16);color:#e2b3c6}
+.heat{padding:24px}.heat h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.heat .hsub{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.cells{display:grid;grid-template-columns:repeat(14,1fr);gap:5px}
+.cell{aspect-ratio:1;border-radius:5px;animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{50%{opacity:.5}}
+.tutor{padding:26px;min-height:200px;display:flex;flex-direction:column;justify-content:space-between}
+.tutor .tag{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc3);margin-bottom:12px}
+.aberr{font-size:23px;font-weight:800;position:relative;letter-spacing:-.02em;line-height:1.15}
+.tutor p{color:var(--mut);font-size:13px;line-height:1.5;margin-top:8px}
+.ask{margin-top:18px;display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.06);border:1px solid var(--stroke);border-radius:14px;padding:11px 14px}
+.ask span{color:var(--dim);font-size:13px}.ask .cur{width:2px;height:15px;background:var(--acc3);animation:flicker 1s steps(1) infinite}
+.xp{padding:24px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.xp .lvl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase}
+.xp .big{font-size:48px;font-weight:800;line-height:1;background:linear-gradient(135deg,#c9ac6a,#c47a96,#9468b0);-webkit-background-clip:text;background-clip:text;color:transparent;margin:6px 0}
+.xp .bar{width:100%;height:8px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:8px}
+.xp .bar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#c9ac6a,#c47a96)}
+.xp .nx{font-family:var(--mono);font-size:10px;color:var(--mut);margin-top:8px}
+.energy{padding:24px;display:flex;align-items:center;gap:20px}
+.gauge{width:110px;height:110px;flex:none;position:relative}.gauge svg{transform:rotate(-90deg)}
+.gauge .v{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge .v b{font-size:22px;font-weight:800}.gauge .v small{font-family:var(--mono);font-size:9px;color:var(--mut);letter-spacing:.15em}
+.energy .em h4{font-size:15px;font-weight:600;margin-bottom:6px}.energy .em p{color:var(--mut);font-size:12px;line-height:1.5}
+.hud{position:fixed;bottom:14px;right:18px;z-index:6;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;text-align:right;line-height:1.7;pointer-events:none}
+.hud .rd{color:var(--acc4)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-vibe="riso">
+<svg width="0" height="0" style="position:absolute">
+  <filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="9" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  <filter id="ink"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="3" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="60"/><feGaussianBlur stdDeviation="1.2"/></filter>
+  <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5fa6bf"/><stop offset=".5" stop-color="#6f73b2"/><stop offset="1" stop-color="#9468b0"/></linearGradient>
+</svg>
+
+<!-- VIBE BACKGROUNDS -->
+<div id="vibe">
+  <div class="vl v-aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div><div class="blob b5"></div></div>
+  <div class="vl v-mural"></div>
+  <div class="vl v-flow"><canvas id="flowC"></canvas></div>
+  <div class="vl v-nebula"><canvas id="starC"></canvas></div>
+  <div class="vl v-topo"></div>
+  <div class="vl v-seigaiha"></div>
+  <div class="vl v-bauhaus"></div>
+  <div class="vl v-riso"><div class="blob r1"></div><div class="blob r2"></div><div class="g"></div></div>
+  <div class="vl v-deco"></div>
+  <div class="vl v-ink"><div class="ib i1"></div><div class="ib i2"></div></div>
+</div>
+<div class="cursorglow" id="cg"></div>
+<div class="grain"></div>
+
+<!-- PICKER -->
+<div class="picker" id="picker"></div>
+
+<div class="shell">
+  <div class="dock"><div class="logo">L</div><a class="on">⊞</a><a>◎</a><a>◔</a><a>▤</a><a>⚙</a></div>
+  <div class="main">
+    <div class="top">
+      <div class="hello"><div class="eyebrow">Tuesday · 27 June · <span id="vibeName">aurora</span></div><h1>Good evening, <span class="g">Shekhar.</span></h1><p>You're 2 topics away from finishing <b style="color:#fff">System Design</b> this week.</p></div>
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#c9ac6a,#c47a96,#9468b0)"><div class="glass streak"><div class="sheen"></div><span class="flame">🔥</span><div class="cardbody"><div class="n">14</div><div class="l">day streak</div></div></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card tilt ring-fx" style="--ooze:linear-gradient(135deg,#5fa6bf,#6f73b2,#9468b0)"><div class="glass focus"><div class="sheen"></div>
+        <div class="ring cardbody"><svg width="172" height="172" viewBox="0 0 172 172"><circle cx="86" cy="86" r="74" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="11"/><circle cx="86" cy="86" r="74" fill="none" stroke="url(#rg)" stroke-width="11" stroke-linecap="round" stroke-dasharray="465" stroke-dashoffset="150" style="filter:drop-shadow(0 0 8px rgba(111,115,178,.6))"/></svg><div class="label"><div class="time" id="clock">24:18</div><div class="sub">focus · deep work</div></div></div>
+        <div class="cardbody" style="flex:1"><div class="tag">▸ Active session</div><h2>Consistency &amp; CAP theorem</h2><div class="desc">Picking up where you left off. 18 minutes of deep focus left — then a 5-minute breather.</div><div class="btnrow"><button class="btn primary">⏸ Pause</button><button class="btn">Skip topic</button></div></div>
+      </div></div>
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#c47a96,#c28a5a,#9468b0)"><div class="glass suggest"><div class="sheen"></div><div class="fx-foil"></div>
+        <div class="cardbody"><div class="tag">✦ Suggested next</div><h3>Database sharding strategies</h3><p>You're ready to push into horizontal scaling. ~25 min read + a 4-question check.</p></div><div class="pill cardbody">START IN FOCUS →</div></div></div>
+    </div>
+    <div class="sect"><h2>Active goals</h2><span class="link">view all →</span></div>
+    <div class="grid3">
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#5fa6bf,#6f73b2,#9468b0)"><div class="glass goal"><div class="sheen"></div><div class="fx-plasma"><i></i><i></i><i></i></div><div class="cardbody"><div class="gtop"><div><div class="gname">System Design</div><div class="due">due in 6 days</div></div><div class="mini-ring"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="19" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/><circle cx="23" cy="23" r="19" fill="none" stroke="url(#rg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="119" stroke-dashoffset="27"/></svg><div class="pc">78%</div></div></div><div class="bar"><i style="width:78%"></i></div><div class="gfoot"><span>14 / 18 topics</span><span class="chip go">on track</span></div></div></div></div>
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#82b89a,#5fa6bf,#6f73b2)"><div class="glass goal"><div class="sheen"></div><div class="fx-wave"></div><div class="cardbody"><div class="gtop"><div><div class="gname">Rust Fundamentals</div><div class="due">due in 19 days</div></div><div class="mini-ring"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="19" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/><circle cx="23" cy="23" r="19" fill="none" stroke="url(#rg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="119" stroke-dashoffset="74"/></svg><div class="pc">38%</div></div></div><div class="bar"><i style="width:38%"></i></div><div class="gfoot"><span>6 / 16 topics</span><span class="chip go">on track</span></div></div></div></div>
+      <div class="card tilt" id="blobcard" style="--ooze:linear-gradient(135deg,#c47a96,#9468b0,#6f73b2)"><div class="glass goal"><div class="sheen"></div><div class="fx-blob" id="blob"></div><div class="cardbody"><div class="gtop"><div><div class="gname">ML Interview Prep</div><div class="due">due in 3 days</div></div><div class="mini-ring"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="19" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/><circle cx="23" cy="23" r="19" fill="none" stroke="url(#rg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="119" stroke-dashoffset="95"/></svg><div class="pc">20%</div></div></div><div class="bar"><i style="width:20%;background:linear-gradient(90deg,#c47a96,#9468b0)"></i></div><div class="gfoot"><span>3 / 15 topics</span><span class="chip rev">behind</span></div></div></div></div>
+    </div>
+    <div class="gridplan mt">
+      <div class="card tilt ring-fx" style="--ooze:linear-gradient(135deg,#82b89a,#5fa6bf,#9468b0)"><div class="glass plan"><div class="sheen"></div><div class="cardbody"><h4>Today's plan</h4><div class="tl">
+        <div class="tlrow done"><span class="t">08:30</span><span class="dot"></span><span class="tx">Morning review · flashcards</span><span class="tg">done</span></div>
+        <div class="tlrow done"><span class="t">10:00</span><span class="dot"></span><span class="tx">Rust · ownership deep dive</span><span class="tg">done</span></div>
+        <div class="tlrow now"><span class="t">14:00</span><span class="dot"></span><span class="tx">System Design · CAP theorem</span><span class="tg">now</span></div>
+        <div class="tlrow"><span class="t">16:30</span><span class="dot"></span><span class="tx">ML · gradient descent retry</span><span class="tg">queued</span></div>
+        <div class="tlrow"><span class="t">19:00</span><span class="dot"></span><span class="tx">Quiz · sharding strategies</span><span class="tg">queued</span></div>
+      </div></div></div></div>
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#6f73b2,#7a61a6,#9468b0)"><div class="glass mom"><div class="sheen"></div><div class="cardbody"><h4>Weekly momentum</h4><div class="hsub">hrs of deep work</div><div class="bars"><i style="height:40%"></i><i style="height:65%"></i><i style="height:50%"></i><i style="height:85%"></i><i style="height:72%"></i><i style="height:95%"></i><i style="height:60%"></i></div><div class="barlabels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div></div></div></div>
+    </div>
+    <div class="grid2 mt">
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#5fa6bf,#6f73b2,#7a61a6)"><div class="glass quiz"><div class="sheen"></div><canvas id="constel" style="position:absolute;inset:0;z-index:1;opacity:.5"></canvas><div class="cardbody"><div class="sect" style="margin:0 0 6px"><h2 style="font-size:16px">Recent quizzes</h2></div>
+        <div class="qitem"><div><div class="qname">CAP theorem</div><div class="qmeta">SYSTEM DESIGN · 2H AGO</div></div><span class="score hi">92%</span></div>
+        <div class="qitem"><div><div class="qname">Ownership &amp; borrowing</div><div class="qmeta">RUST · YESTERDAY</div></div><span class="score mid">74%</span></div>
+        <div class="qitem"><div><div class="qname">Gradient descent</div><div class="qmeta">ML PREP · 2 DAYS AGO</div></div><span class="score lo">58%</span></div>
+        <div class="qitem"><div><div class="qname">Load balancing</div><div class="qmeta">SYSTEM DESIGN · 3 DAYS AGO</div></div><span class="score hi">88%</span></div>
+      </div></div></div>
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#8bbecb,#5fa6bf,#9468b0)"><div class="glass heat"><div class="sheen"></div><div class="cardbody"><h4>Focus heatmap</h4><div class="hsub">last 14 days · 9.4 hrs deep work</div><div class="cells" id="cells"></div></div></div></div>
+    </div>
+    <div class="gridtri mt">
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#c47a96,#5fa6bf,#9468b0)"><div class="glass tutor"><div class="sheen"></div><div class="cardbody"><div class="tag">✦ AI tutor</div><div class="aberr">Stuck on something?</div><p>Ask anything about your goals. I know what you've studied and where you slipped.</p></div><div class="ask cardbody"><span>Explain CAP theorem like I'm 5</span><span class="cur"></span></div></div></div>
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#c9ac6a,#c47a96,#9468b0)"><div class="glass xp"><div class="sheen"></div><div class="cardbody"><div class="lvl">Level 12 · Scholar</div><div class="big">4,820</div><div class="lvl">XP this season</div><div class="bar"><i style="width:64%"></i></div><div class="nx">680 XP to Level 13</div></div></div></div>
+      <div class="card tilt" style="--ooze:linear-gradient(135deg,#82b89a,#5fa6bf,#6f73b2)"><div class="glass energy"><div class="sheen"></div><div class="gauge cardbody"><svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="46" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/><circle cx="55" cy="55" r="46" fill="none" stroke="url(#rg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="78" style="filter:drop-shadow(0 0 6px rgba(95,166,191,.6))"/></svg><div class="v"><b>73%</b><small>FOCUS</small></div></div><div class="em cardbody"><h4>Energy today</h4><p>Peak focus window detected 2–4pm. Schedule the hard topic now.</p></div></div></div>
+    </div>
+  </div>
+</div>
+<div class="hud">LEARNIX // VIBE <span id="vibeNum">01</span>/10<br><span class="rd">● </span><span id="vibeLabel">AURORA</span></div>
+
+<script>
+// ===== vibes =====
+const VIBES=[
+ {k:'aurora',n:'Aurora',d:'refined psychedelic'},
+ {k:'mural',n:'Hand-drawn Mural',d:'hermès ink linework'},
+ {k:'flow',n:'Flow-field Silk',d:'generative threads'},
+ {k:'nebula',n:'Cosmic Nebula',d:'starfield + gas'},
+ {k:'topo',n:'Topographic',d:'contour relief'},
+ {k:'seigaiha',n:'Seigaiha Waves',d:'japanese sea'},
+ {k:'bauhaus',n:'Bauhaus',d:'geometric art'},
+ {k:'riso',n:'Risograph',d:'duotone grain'},
+ {k:'deco',n:'Art Deco Gold',d:'gatsby linework'},
+ {k:'ink',n:'Ink Wash',d:'sumi-e brush'},
+];
+const picker=document.getElementById('picker');
+let cur=0;
+VIBES.forEach((v,i)=>{const c=document.createElement('div');c.className='chip';c.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b>${v.n}`;c.onclick=()=>setVibe(i);picker.appendChild(c);});
+function setVibe(i){
+  cur=(i+VIBES.length)%VIBES.length;const v=VIBES[cur];
+  document.body.dataset.vibe=v.k;
+  [...picker.children].forEach((c,j)=>c.classList.toggle('on',j===cur));
+  document.getElementById('vibeName').textContent=v.d;
+  document.getElementById('vibeNum').textContent=String(cur+1).padStart(2,'0');
+  document.getElementById('vibeLabel').textContent=v.n.toUpperCase();
+  // active chip into view
+  picker.children[cur].scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+  manageCanvas(v.k);
+}
+addEventListener('keydown',e=>{if(e.key==='ArrowRight')setVibe(cur+1);if(e.key==='ArrowLeft')setVibe(cur-1);});
+
+// ===== flow-field canvas (vibe 3) =====
+const flowC=document.getElementById('flowC'),fx=flowC.getContext('2d');let fP=[],fT=0,flowOn=false;
+function flowSize(){flowC.width=innerWidth;flowC.height=innerHeight;fx.fillStyle='#07090f';fx.fillRect(0,0,flowC.width,flowC.height);fP=[];for(let i=0;i<700;i++)fP.push({x:Math.random()*flowC.width,y:Math.random()*flowC.height});}
+const ffield=(a,b,t)=>Math.sin(a*0.0024+t)+Math.cos(b*0.0026-t*0.7)+Math.sin((a+b)*0.0016);
+function flowLoop(){if(!flowOn)return;fT+=0.0009;fx.fillStyle='rgba(7,9,15,0.05)';fx.fillRect(0,0,flowC.width,flowC.height);fx.strokeStyle='rgba(150,180,230,0.18)';fx.lineWidth=1;fx.beginPath();
+  for(const p of fP){const a=ffield(p.x,p.y,fT)*Math.PI,nx=p.x+Math.cos(a)*1.4,ny=p.y+Math.sin(a)*1.4;fx.moveTo(p.x,p.y);fx.lineTo(nx,ny);p.x=nx;p.y=ny;if(p.x<0||p.x>flowC.width||p.y<0||p.y>flowC.height){p.x=Math.random()*flowC.width;p.y=Math.random()*flowC.height;}}
+  fx.stroke();requestAnimationFrame(flowLoop);}
+
+// ===== nebula stars (vibe 4) =====
+const starC=document.getElementById('starC'),sx=starC.getContext('2d');let S=[],starOn=false,sTick=0;
+function starSize(){starC.width=innerWidth;starC.height=innerHeight;S=Array.from({length:Math.min(240,innerWidth*innerHeight/9000)},()=>({x:Math.random()*starC.width,y:Math.random()*starC.height,r:Math.random()*1.3+.2,p:Math.random()*6.28,s:Math.random()*.04+.01}));}
+function starLoop(){if(!starOn)return;sTick+=1;sx.clearRect(0,0,starC.width,starC.height);for(const o of S){const a=.5+.5*Math.sin(o.p+sTick*o.s);sx.globalAlpha=a;sx.beginPath();sx.arc(o.x,o.y,o.r,0,7);sx.fillStyle='#fff';sx.fill();}sx.globalAlpha=1;requestAnimationFrame(starLoop);}
+
+function manageCanvas(k){
+  flowOn=(k==='flow');starOn=(k==='nebula');
+  if(flowOn){flowSize();requestAnimationFrame(flowLoop);}
+  if(starOn){starSize();requestAnimationFrame(starLoop);}
+}
+addEventListener('resize',()=>{if(flowOn)flowSize();if(starOn)starSize();});
+
+// ===== pointer (tilt/sheen/blob) =====
+const cg=document.getElementById('cg');const cards=[...document.querySelectorAll('.card.tilt')];
+const blobCard=document.getElementById('blobcard'),blob=document.getElementById('blob');
+let px=0,py=0,hc=null,raf=0;
+addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;if(!raf)raf=requestAnimationFrame(ap);},{passive:true});
+function ap(){raf=0;cg.style.transform=`translate(${px}px,${py}px) translate(-50%,-50%)`;if(hc){const r=hc.getBoundingClientRect(),mx=(px-r.left)/r.width,my=(py-r.top)/r.height;hc.style.transform=`perspective(900px) rotateY(${(mx-.5)*7}deg) rotateX(${(.5-my)*7}deg) translateY(-2px)`;hc.style.setProperty('--mx',mx*100+'%');hc.style.setProperty('--my',my*100+'%');if(hc===blobCard)blob.style.transform=`translate(${px-r.left-75}px,${py-r.top-75}px)`;}}
+cards.forEach(c=>{c.addEventListener('pointerenter',()=>hc=c);c.addEventListener('pointerleave',()=>{if(hc===c){hc=null;c.style.transform='';}});});
+
+// ===== clock, cells, constellation =====
+let t=24*60+18;setInterval(()=>{t=Math.max(0,t-1);const m=String(Math.floor(t/60)).padStart(2,'0'),s=String(t%60).padStart(2,'0');document.getElementById('clock').textContent=m+':'+s;},1000);
+const cells=document.getElementById('cells');for(let i=0;i<14;i++){const v=Math.random(),d=document.createElement('div');d.className='cell';const a=v*.9+.05;d.style.background=`linear-gradient(135deg,rgba(95,166,191,${a}),rgba(148,104,176,${a}))`;if(v<.18)d.style.background='rgba(255,255,255,.05)';d.style.animationDelay=(i*.12)+'s';cells.appendChild(d);}
+const cv=document.getElementById('constel'),ccx=cv.getContext('2d');let nodes=[],cOn=false,dpr=Math.min(devicePixelRatio,1.5);
+function crsz(){cv.width=cv.offsetWidth*dpr;cv.height=cv.offsetHeight*dpr;nodes=[];for(let i=0;i<18;i++)nodes.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4});}
+function cdraw(){if(!cOn)return;ccx.clearRect(0,0,cv.width,cv.height);for(const a of nodes){a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>cv.width)a.vx*=-1;if(a.y<0||a.y>cv.height)a.vy*=-1;}for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y),lim=120*dpr;if(d<lim){ccx.strokeStyle=`rgba(111,115,178,${(1-d/lim)*.4})`;ccx.lineWidth=.7;ccx.beginPath();ccx.moveTo(a.x,a.y);ccx.lineTo(b.x,b.y);ccx.stroke();}}for(const a of nodes){ccx.beginPath();ccx.arc(a.x,a.y,1.5*dpr,0,6.28);ccx.fillStyle='rgba(148,104,176,.8)';ccx.fill();}requestAnimationFrame(cdraw);}
+new IntersectionObserver(es=>{cOn=es[0].isIntersecting&&!document.hidden;if(cOn)requestAnimationFrame(cdraw);}).observe(cv);
+document.addEventListener('visibilitychange',()=>{cOn=!document.hidden;if(cOn)requestAnimationFrame(cdraw);});
+setTimeout(()=>{crsz();cOn=true;requestAnimationFrame(cdraw);},80);addEventListener('resize',crsz);
+
+// init
+setVibe(7);
+</script>
+</body>
+</html>
