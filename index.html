@@ -50,6 +50,14 @@ a.card:hover{transform:translateY(-8px)}
   background-image:radial-gradient(circle,#22e0ff 1px,transparent 1.5px),radial-gradient(circle,#ff3bd0 1px,transparent 1.5px);
   background-size:54px 54px,80px 80px;background-position:0 0,30px 30px;opacity:.4}
 .c3:hover{box-shadow:0 24px 60px rgba(34,224,255,.25)}
+/* cyberpunk preview */
+.c4 .prev{background:#070708}
+.c4 .prev::after{content:"";position:absolute;inset:0;
+  background-image:repeating-linear-gradient(transparent 0 3px,rgba(0,0,0,.5) 3px 4px),
+    radial-gradient(circle at 50% 45%,rgba(255,42,24,.18),transparent 55%),
+    radial-gradient(circle,#cfd6dd 1px,transparent 1.4px);
+  background-size:auto,auto,9px 9px;opacity:.55}
+.c4:hover{box-shadow:0 24px 60px rgba(255,42,24,.28)}
 .meta{position:relative;z-index:2}
 .tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
   border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 12px;margin-bottom:14px;color:var(--txt)}
@@ -95,6 +103,15 @@ h2{font-family:var(--disp);font-weight:800;font-size:27px;letter-spacing:-.01em;
         <h2>Neural Bioluminescence</h2>
         <p class="desc">A living particle synapse net in the deep dark. Synapses fire when the bot thinks.</p>
         <div class="enter">enter ▸</div>
+      </div>
+    </a>
+    <a class="card c4" href="cyberpunk.html">
+      <div class="prev"></div>
+      <div class="meta">
+        <span class="tag">04 · classified</span>
+        <h2>Exocortex // Cyberpunk</h2>
+        <p class="desc">WebGL chrome logo that assembles from particles then shatters on scroll. Three.js + GSAP + Lenis. HUD overlays, glitch, pixel-dissolve work grid.</p>
+        <div class="enter">breach ▸</div>
       </div>
     </a>
   </div>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EXOCORTEX // CLASSIFIED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Space+Mono:wght@400;700&family=Archivo:wght@400;600;800;900&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#070708; --bg2:#0c0d10; --ink:#e7e9ee; --mut:#6b7078;
+  --red:#ff2a18; --red-dim:#7a1810;
+  --mono:"Space Mono",monospace; --disp:"Pirata One",serif; --f:"Archivo",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;cursor:crosshair}
+::selection{background:var(--red);color:#000}
+canvas#gl{position:fixed;inset:0;z-index:1;display:block}
+
+/* ---------- global FX overlays ---------- */
+.grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.scan{position:fixed;inset:0;z-index:61;pointer-events:none;
+  background:repeating-linear-gradient(transparent 0 3px,rgba(0,0,0,.16) 3px 4px);mix-blend-mode:multiply;opacity:.5}
+.vig{position:fixed;inset:0;z-index:62;pointer-events:none;box-shadow:inset 0 0 260px 60px #000;opacity:.85}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;inset:0;z-index:50;pointer-events:none;font-family:var(--mono);font-size:10px;
+  letter-spacing:.12em;color:var(--mut);text-transform:uppercase}
+.hud .tl{position:absolute;top:18px;left:20px;line-height:1.7}
+.hud .tr{position:absolute;top:18px;right:20px;text-align:right;line-height:1.7}
+.hud .bl{position:absolute;bottom:18px;left:20px;line-height:1.7}
+.hud .br{position:absolute;bottom:18px;right:20px;text-align:right;line-height:1.7}
+.hud b{color:var(--ink)}
+.hud .rd{color:var(--red)}
+.tick{display:inline-block;width:6px;height:6px;background:var(--red);box-shadow:0 0 8px var(--red);
+  border-radius:1px;animation:bl 1.1s steps(1) infinite;vertical-align:middle;margin-right:5px}
+@keyframes bl{50%{opacity:.15}}
+.corner{position:fixed;width:26px;height:26px;border:1px solid var(--red);z-index:51;pointer-events:none;opacity:.55}
+.corner.a{top:12px;left:12px;border-right:0;border-bottom:0}
+.corner.b{top:12px;right:12px;border-left:0;border-bottom:0}
+.corner.c{bottom:12px;left:12px;border-right:0;border-top:0}
+.corner.d{bottom:12px;right:12px;border-left:0;border-top:0}
+
+/* top nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:55;display:flex;align-items:center;
+  justify-content:space-between;padding:16px 52px;mix-blend-mode:difference}
+nav .brand{font-family:var(--disp);font-size:24px;letter-spacing:.04em;color:#fff;line-height:1}
+nav .links{display:flex;gap:26px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+nav .links a{color:#fff;text-decoration:none;opacity:.8;transition:.2s;position:relative}
+nav .links a:hover{opacity:1}
+nav .links a::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--red);transition:.3s}
+nav .links a:hover::after{width:100%}
+@media(max-width:720px){nav{padding:14px 22px}nav .links{display:none}}
+
+/* scroll progress */
+.prog{position:fixed;top:0;left:0;height:2px;background:var(--red);width:0;z-index:70;box-shadow:0 0 12px var(--red)}
+
+/* ---------- sections ---------- */
+section{position:relative;z-index:10}
+.hero{height:100vh;display:flex;align-items:flex-end;justify-content:center;padding-bottom:13vh}
+.hero .tagline{font-family:var(--mono);font-size:12px;letter-spacing:.4em;text-transform:uppercase;
+  color:var(--mut);text-align:center}
+.hero .tagline .rd{color:var(--red)}
+.hero .scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-family:var(--mono);
+  font-size:10px;letter-spacing:.3em;color:var(--mut);text-transform:uppercase;animation:fade 2s ease-in-out infinite}
+@keyframes fade{50%{opacity:.3}}
+
+.panel{max-width:1180px;margin:0 auto;padding:0 52px}
+@media(max-width:720px){.panel{padding:0 22px}}
+
+/* manifesto */
+.manifesto{min-height:100vh;display:flex;align-items:center;background:linear-gradient(180deg,transparent,var(--bg2) 30%,var(--bg2) 70%,transparent)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--red);margin-bottom:26px}
+.kicker::before{content:"// ";color:var(--mut)}
+.bigtype{font-family:var(--f);font-weight:900;font-size:clamp(34px,6.2vw,82px);line-height:1.0;letter-spacing:-.02em;max-width:14ch}
+.bigtype .o{color:var(--mut);-webkit-text-stroke:1px var(--mut);-webkit-text-fill-color:transparent}
+.bigtype em{font-family:var(--disp);font-style:normal;color:var(--red);font-weight:400}
+.lead{font-family:var(--mono);font-size:14px;line-height:1.9;color:var(--mut);max-width:46ch;margin-top:34px}
+.lead b{color:var(--ink)}
+
+/* glitch heading */
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;clip-path:inset(0);opacity:0}
+.glitch.go::before{animation:gx .7s steps(2) 1;color:var(--red);left:3px}
+.glitch.go::after{animation:gy .7s steps(2) 1;color:#27d3ff;left:-3px}
+@keyframes gx{0%{opacity:.9;clip-path:inset(10% 0 70% 0)}40%{clip-path:inset(60% 0 10% 0)}100%{opacity:0}}
+@keyframes gy{0%{opacity:.8;clip-path:inset(70% 0 10% 0)}45%{clip-path:inset(20% 0 55% 0)}100%{opacity:0}}
+
+/* work grid */
+.work{padding:14vh 0}
+.work .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:48px;flex-wrap:wrap;gap:14px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.card{position:relative;aspect-ratio:16/10;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#000;cursor:pointer}
+.card canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.card .cap{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:18px 20px;display:flex;justify-content:space-between;
+  align-items:flex-end;background:linear-gradient(transparent,rgba(0,0,0,.85));pointer-events:none}
+.card .cap h3{font-family:var(--f);font-weight:800;font-size:20px;letter-spacing:-.01em}
+.card .cap .id{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--red)}
+.card .meta{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--mut);text-transform:uppercase}
+.card .scanbar{position:absolute;left:0;right:0;top:0;height:2px;background:var(--red);z-index:4;
+  box-shadow:0 0 12px var(--red);transform:translateY(0);opacity:0}
+
+/* stats strip */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.07);margin:0 0 0}
+.stat{background:var(--bg);padding:34px 24px;text-align:center}
+.stat .n{font-family:var(--disp);font-size:clamp(34px,5vw,60px);color:#fff;line-height:1}
+.stat .n .rd{color:var(--red)}
+.stat .l{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mut);text-transform:uppercase;margin-top:10px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* testimonial */
+.quote{min-height:90vh;display:flex;align-items:center}
+.quote .panel{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:center}
+@media(max-width:720px){.quote .panel{grid-template-columns:1fr;gap:30px}}
+.qtext{font-family:var(--mono);font-size:clamp(15px,2vw,21px);line-height:2;color:var(--ink)}
+.qtext .dim{color:var(--mut)}
+.qmeta{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+.qmeta .rd{color:var(--red)}
+
+/* CTA / footer */
+.cta{min-height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:30px}
+.cta .big{font-family:var(--disp);font-size:clamp(48px,12vw,160px);line-height:.9;color:#fff;letter-spacing:.02em}
+.cta .big span{color:var(--red)}
+.cta a.btn{font-family:var(--mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#000;
+  background:var(--red);padding:16px 34px;text-decoration:none;border:1px solid var(--red);transition:.25s;position:relative;overflow:hidden}
+.cta a.btn:hover{background:transparent;color:var(--red);box-shadow:0 0 30px var(--red-dim)}
+footer{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);
+  text-align:center;padding:30px;border-top:1px solid rgba(255,255,255,.07)}
+footer .rd{color:var(--red)}
+.home{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:80;font-family:var(--mono);font-size:10px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--mut);text-decoration:none;border:1px solid rgba(255,255,255,.12);
+  padding:7px 14px;background:rgba(7,7,8,.6);backdrop-filter:blur(8px)}
+.home:hover{color:var(--red);border-color:var(--red)}
+
+/* boot loader */
+.boot{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.boot .bt{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--mut);text-transform:uppercase}
+.boot .pct{font-family:var(--disp);font-size:64px;color:#fff}
+.boot .pct span{color:var(--red)}
+.boot .barwrap{width:240px;height:2px;background:rgba(255,255,255,.1)}
+.boot .bar{height:100%;width:0;background:var(--red);box-shadow:0 0 12px var(--red)}
+</style>
+</head>
+<body>
+<div class="boot" id="boot">
+  <div class="bt" id="bootlabel">initializing exocortex kernel</div>
+  <div class="pct" id="bootpct">0<span>%</span></div>
+  <div class="barwrap"><div class="bar" id="bootbar"></div></div>
+</div>
+
+<canvas id="gl"></canvas>
+<div class="prog" id="prog"></div>
+
+<span class="corner a"></span><span class="corner b"></span><span class="corner c"></span><span class="corner d"></span>
+<div class="hud">
+  <div class="tl"><span class="tick"></span>SYS <b>ONLINE</b><br>NODE <b>0x7F::EXO</b><br><span class="rd">CLASSIFIED</span></div>
+  <div class="tr">LAT <b id="hud-lat">12</b>MS<br>FPS <b id="hud-fps">60</b><br>BUILD <b>v4.0.0</b></div>
+  <div class="bl">COORD<br><b id="hud-coord">00.000 / 00.000</b><br>SECTOR <span class="rd">07</span></div>
+  <div class="br">SCROLL <b id="hud-scroll">000</b>%<br>MEM <b>74</b>%<br><span class="rd">REC ●</span></div>
+</div>
+
+<nav>
+  <div class="brand">Exocortex</div>
+  <div class="links"><a href="#manifesto">MANIFEST</a><a href="#work">WORK</a><a href="#quote">VOICES</a><a href="#cta">CONTACT</a></div>
+</nav>
+
+<!-- HERO (three.js particle logo behind) -->
+<section class="hero" id="hero">
+  <div class="tagline">PRODUCT DESIGN <span class="rd">×</span> CREATIVE ENGINEERING <span class="rd">×</span> UNCOMFORTABLE IDEAS</div>
+  <div class="scrollcue">▼ SCROLL TO BREACH</div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto" id="manifesto">
+  <div class="panel">
+    <div class="kicker" data-reveal>transmission 001 — manifest</div>
+    <h1 class="bigtype" data-reveal>We build the <em>interfaces</em> the future <span class="o">leaks</span> through.</h1>
+    <p class="lead" data-reveal>Most digital work is forgettable by design — safe grids, stock motion, the same five templates. <b>We don't do safe.</b> Every surface is engineered to feel alive, unpredictable, and a little dangerous. Shaders over screenshots. Systems over pages. <b>Signal over noise.</b></p>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="panel" style="padding-top:6vh;padding-bottom:6vh">
+  <div class="stats" data-reveal>
+    <div class="stat"><div class="n">14<span class="rd">+</span></div><div class="l">YEARS DEEP</div></div>
+    <div class="stat"><div class="n">200<span class="rd">+</span></div><div class="l">SYSTEMS SHIPPED</div></div>
+    <div class="stat"><div class="n">38</div><div class="l">AWARDS / NODES</div></div>
+    <div class="stat"><div class="n">∞</div><div class="l">IDEAS PENDING</div></div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="work" id="work">
+  <div class="panel">
+    <div class="head">
+      <h2 class="bigtype glitch" data-text="SELECTED FILES" data-reveal data-glitch>SELECTED FILES</h2>
+      <div class="meta" data-reveal>[ 04 DECLASSIFIED / HOVER TO DECRYPT ]</div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote" id="quote">
+  <div class="panel">
+    <div>
+      <div class="kicker" data-reveal>transmission 002 — voices</div>
+      <p class="qtext" data-reveal>"When I first brought this up, I had <span class="dim">no clue</span> we were touching something this complex — and I definitely didn't expect it to be solved <span class="rd" style="font-style:normal">this elegantly.</span> What they built goes way beyond just <span class="dim">getting it done.</span> It's a mindset. A level of care and execution that truly stands out."</p>
+    </div>
+    <div data-reveal>
+      <div class="qmeta"><span class="rd">▸</span> SEBASTIAN R.<br>FOUNDER / NIGHTSHIFT LABS<br><br><span class="dim">VERIFIED CLIENT · NODE 0x44</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+  <div class="kicker" data-reveal>transmission 003 — uplink</div>
+  <h2 class="big" data-reveal>LET'S<br>BREAK<br><span>SOMETHING.</span></h2>
+  <a class="btn" href="mailto:hello@exocortex.dev" data-reveal>OPEN A CHANNEL →</a>
+</section>
+<footer>EXOCORTEX STUDIO · BUILT WITH THREE.JS / GSAP / LENIS · <span class="rd">2026</span> · ALL SIGNALS RESERVED</footer>
+
+<a class="home" href="index.html">← UI_SET_2 INDEX</a>
+
+<!-- libs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const HERO_WORD = "EXOCORTEX";
+
+/* ================= boot loader ================= */
+const boot=document.getElementById('boot'),bootbar=document.getElementById('bootbar'),
+bootpct=document.getElementById('bootpct'),bootlabel=document.getElementById('bootlabel');
+const bootSteps=["initializing exocortex kernel","mounting shader pipeline","sampling particle field","calibrating bloom core","decrypting interface"];
+let bp=0;
+const bootTimer=setInterval(()=>{
+  bp=Math.min(100,bp+Math.random()*9+3);
+  bootbar.style.width=bp+'%';
+  bootpct.innerHTML=Math.floor(bp)+'<span>%</span>';
+  bootlabel.textContent=bootSteps[Math.min(bootSteps.length-1,Math.floor(bp/20))];
+  if(bp>=100){clearInterval(bootTimer);finishBoot();}
+},130);
+function finishBoot(){
+  gsap.to(boot,{opacity:0,duration:.6,delay:.2,onComplete:()=>{boot.style.display='none';startHero();revealAll();}});
+}
+
+/* ================= three.js particle hero ================= */
+const canvas=document.getElementById('gl');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+const scene=new THREE.Scene();
+scene.fog=new THREE.FogExp2(0x070708,0.06);
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,100);
+camera.position.set(0,0,14);
+
+// sample word -> points
+function sampleWord(word){
+  const c=document.createElement('canvas');c.width=1600;c.height=420;
+  const x=c.getContext('2d');
+  x.fillStyle='#fff';x.textAlign='center';x.textBaseline='middle';
+  let size=300;x.font=`${size}px 'Pirata One'`;
+  while(x.measureText(word).width>1480 && size>40){size-=10;x.font=`${size}px 'Pirata One'`;}
+  x.fillText(word,800,225);
+  const d=x.getImageData(0,0,1600,420).data;
+  const pts=[];const step=4;
+  for(let y=0;y<420;y+=step)for(let xx=0;xx<1600;xx+=step){
+    if(d[(y*1600+xx)*4+3]>120){
+      pts.push([(xx-800)/52,(210-y)/52,(Math.random()-0.5)*0.6]);
+    }
+  }
+  return pts;
+}
+
+let geo,points,reflect,targets,starts,shatterDir,count;
+function buildParticles(){
+  const pts=sampleWord(HERO_WORD);
+  count=pts.length;
+  const pos=new Float32Array(count*3);
+  starts=new Float32Array(count*3);
+  targets=new Float32Array(count*3);
+  shatterDir=new Float32Array(count*3);
+  const col=new Float32Array(count*3);
+  for(let i=0;i<count;i++){
+    const [tx,ty,tz]=pts[i];
+    targets[i*3]=tx;targets[i*3+1]=ty;targets[i*3+2]=tz;
+    // start: scattered sphere
+    const r=18+Math.random()*16,th=Math.random()*6.28,ph=Math.acos(2*Math.random()-1);
+    starts[i*3]=r*Math.sin(ph)*Math.cos(th);
+    starts[i*3+1]=r*Math.sin(ph)*Math.sin(th);
+    starts[i*3+2]=r*Math.cos(ph)-6;
+    pos[i*3]=starts[i*3];pos[i*3+1]=starts[i*3+1];pos[i*3+2]=starts[i*3+2];
+    // shatter direction (outward from center + up bias)
+    const dx=tx+(Math.random()-.5)*2,dy=ty+(Math.random()-.5)*2;
+    const len=Math.hypot(dx,dy)||1;
+    shatterDir[i*3]=dx/len;shatterDir[i*3+1]=dy/len+0.4;shatterDir[i*3+2]=(Math.random()-.5);
+    // color: silver chrome w/ slight cool + occasional red ember
+    const ember=Math.random()<0.04;
+    if(ember){col[i*3]=1;col[i*3+1]=0.16;col[i*3+2]=0.09;}
+    else{const v=0.72+Math.random()*0.28;col[i*3]=v;col[i*3+1]=v;col[i*3+2]=Math.min(1,v+0.06);}
+  }
+  geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const sprite=makeSprite();
+  const mat=new THREE.PointsMaterial({size:0.085,map:sprite,vertexColors:true,
+    transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:1});
+  points=new THREE.Points(geo,mat);scene.add(points);
+  // reflection
+  const rmat=mat.clone();rmat.opacity=0.18;
+  reflect=new THREE.Points(geo,rmat);
+  reflect.scale.y=-1;reflect.position.y=-7.4;scene.add(reflect);
+}
+function makeSprite(){
+  const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');
+  const g=x.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.3,'rgba(255,255,255,.7)');
+  g.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=g;x.fillRect(0,0,64,64);
+  const t=new THREE.CanvasTexture(c);return t;
+}
+
+let assemble=0,shatter=0,heroStarted=false;
+function startHero(){
+  heroStarted=true;
+  gsap.to({v:0},{v:1,duration:2.6,ease:"power3.out",onUpdate:function(){assemble=this.targets()[0].v;}});
+  // shatter on hero scroll
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.create({trigger:"#hero",start:"top top",end:"bottom top",scrub:1,
+    onUpdate:s=>{shatter=s.progress;}});
+}
+function updateParticles(t){
+  if(!geo)return;
+  const p=geo.attributes.position.array;
+  const ease=assemble<1?(1-Math.pow(1-assemble,3)):1;
+  for(let i=0;i<count;i++){
+    const i3=i*3;
+    let bx=starts[i3]+(targets[i3]-starts[i3])*ease;
+    let by=starts[i3+1]+(targets[i3+1]-starts[i3+1])*ease;
+    let bz=starts[i3+2]+(targets[i3+2]-starts[i3+2])*ease;
+    // idle shimmer
+    by+=Math.sin(t*0.0011+i*0.4)*0.02;
+    // shatter push
+    const sh=shatter*shatter*9;
+    p[i3]=bx+shatterDir[i3]*sh;
+    p[i3+1]=by+shatterDir[i3+1]*sh;
+    p[i3+2]=bz+shatterDir[i3+2]*sh*1.6;
+  }
+  geo.attributes.position.needsUpdate=true;
+  points.material.opacity=1-shatter*0.85;
+  reflect.material.opacity=Math.max(0,0.18-shatter*0.18);
+}
+
+// post fx
+const composer=new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene,camera));
+const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.95,0.5,0.0);
+composer.addPass(bloom);
+
+// mouse parallax
+let mx=0,my=0,tmx=0,tmy=0;
+addEventListener('mousemove',e=>{tmx=(e.clientX/innerWidth-.5);tmy=(e.clientY/innerHeight-.5);});
+
+let last=performance.now(),frames=0,fpsT=0;
+function loop(t){
+  requestAnimationFrame(loop);
+  mx+=(tmx-mx)*0.05;my+=(tmy-my)*0.05;
+  if(points){points.rotation.y=mx*0.5;points.rotation.x=my*0.3;
+    reflect.rotation.y=mx*0.5;reflect.rotation.x=my*0.3;}
+  updateParticles(t);
+  composer.render();
+  // fps hud
+  frames++;if(t-fpsT>500){const fps=Math.round(frames*1000/(t-fpsT));document.getElementById('hud-fps').textContent=fps;frames=0;fpsT=t;}
+}
+buildParticles();
+// ensure font loaded then rebuild for crisp sampling
+document.fonts.ready.then(()=>{document.fonts.load("300px 'Pirata One'").then(()=>{
+  scene.remove(points);scene.remove(reflect);buildParticles();});});
+requestAnimationFrame(loop);
+
+addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);
+});
+
+/* ================= Lenis smooth scroll ================= */
+const lenis=new Lenis({lerp:0.09,smoothWheel:true});
+function raf(time){lenis.raf(time);requestAnimationFrame(raf);}
+requestAnimationFrame(raf);
+lenis.on('scroll',(e)=>{ if(window.ScrollTrigger) ScrollTrigger.update();
+  const sp=Math.round((scrollY/(document.body.scrollHeight-innerHeight))*100)||0;
+  document.getElementById('prog').style.width=sp+'%';
+  document.getElementById('hud-scroll').textContent=String(sp).padStart(3,'0');
+});
+// nav anchor -> lenis
+document.querySelectorAll('nav a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{e.preventDefault();lenis.scrollTo(a.getAttribute('href'),{offset:-20});});
+});
+
+/* ================= GSAP reveals + glitch ================= */
+function revealAll(){
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll('[data-reveal]').forEach(el=>{
+    gsap.fromTo(el,{y:46,opacity:0,filter:'blur(6px)'},
+      {y:0,opacity:1,filter:'blur(0px)',duration:0.9,ease:"power3.out",
+       scrollTrigger:{trigger:el,start:"top 85%"}});
+  });
+  document.querySelectorAll('[data-glitch]').forEach(el=>{
+    ScrollTrigger.create({trigger:el,start:"top 80%",onEnter:()=>{el.classList.add('go');setTimeout(()=>el.classList.remove('go'),750);}});
+  });
+}
+
+/* ================= HUD live data ================= */
+setInterval(()=>{
+  document.getElementById('hud-lat').textContent=8+Math.floor(Math.random()*22);
+  const a=(Math.random()*90).toFixed(3),b=(Math.random()*90).toFixed(3);
+  document.getElementById('hud-coord').textContent=a+' / '+b;
+},900);
+
+/* ================= WORK cards: pixel-dissolve canvases ================= */
+const WORK=[
+  {id:"FILE_001",name:"NIGHTSHIFT OS",meta:"WEBGL · BRAND · 2026",hue:[255,42,24]},
+  {id:"FILE_002",name:"VANTA TERMINAL",meta:"PRODUCT · MOTION · 2025",hue:[255,42,24]},
+  {id:"FILE_003",name:"GHOST PROTOCOL",meta:"3D · IDENTITY · 2025",hue:[39,211,255]},
+  {id:"FILE_004",name:"REDLINE LABS",meta:"SHADERS · UX · 2024",hue:[255,42,24]},
+];
+const grid=document.getElementById('grid');
+WORK.forEach((w,idx)=>{
+  const card=document.createElement('div');card.className='card';
+  card.innerHTML=`<canvas></canvas><div class="scanbar"></div>
+    <div class="cap"><div><div class="id">${w.id}</div><h3>${w.name}</h3></div><div class="meta">${w.meta}</div></div>`;
+  grid.appendChild(card);
+  setupCard(card.querySelector('canvas'),card.querySelector('.scanbar'),w,idx);
+});
+function setupCard(cv,scanbar,w,idx){
+  const cx=cv.getContext('2d');
+  function size(){cv.width=cv.clientWidth;cv.height=cv.clientHeight;}
+  let hover=0,target=0,raf2;
+  const cols=64; // pixel grid
+  // procedural base "image": abstract red/mono noise field per card
+  function draw(){
+    size();const W=cv.width,H=cv.height;if(!W){return;}
+    const cw=W/cols, rows=Math.ceil(H/cw);
+    cx.fillStyle='#0a0a0c';cx.fillRect(0,0,W,H);
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      const seed=Math.sin((c*12.9898+r*78.233+idx*37.41))*43758.5453;
+      const n=seed-Math.floor(seed);
+      // base monochrome value
+      let g=Math.floor(18+n*70);
+      // diagonal structure
+      const struct=((c+r+idx*7)%9<2)?40:0;
+      g+=struct;
+      // dissolve: cells with threshold below hover become accent / void
+      const cell=(c/cols);
+      const diss=hover*1.25 - cell - (n-0.5)*0.35;
+      if(diss>0){
+        if(n<0.5){cx.fillStyle=`rgb(${w.hue[0]},${w.hue[1]},${w.hue[2]})`;}
+        else{cx.fillStyle='#0a0a0c';}
+      } else {
+        cx.fillStyle=`rgb(${g},${g},${g+6})`;
+      }
+      cx.fillRect(Math.floor(c*cw),Math.floor(r*cw),Math.ceil(cw)+1,Math.ceil(cw)+1);
+    }
+    // center glyph
+    cx.fillStyle=hover>0.5?`rgba(${w.hue[0]},${w.hue[1]},${w.hue[2]},.9)`:'rgba(255,255,255,.22)';
+    cx.font=`${Math.floor(W/9)}px 'Pirata One'`;cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText(['§','¶','Ω','∆'][idx%4],W/2,H/2-6);
+  }
+  function anim(){hover+=(target-hover)*0.12;draw();
+    if(Math.abs(target-hover)>0.001){raf2=requestAnimationFrame(anim);} else {draw();}}
+  cv.parentElement.addEventListener('mouseenter',()=>{target=1;scanbar.style.opacity=1;
+    gsap.fromTo(scanbar,{y:0},{y:cv.clientHeight,duration:.6,ease:"power2.inOut",onComplete:()=>scanbar.style.opacity=0});
+    cancelAnimationFrame(raf2);anim();});
+  cv.parentElement.addEventListener('mouseleave',()=>{target=0;cancelAnimationFrame(raf2);anim();});
+  new ResizeObserver(()=>draw()).observe(cv);
+  draw();
+}
+</script>
+</body>
+</html>
