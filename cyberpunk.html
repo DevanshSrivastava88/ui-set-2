@@ -404,7 +404,16 @@ window.__exo={
   step:(n)=>{for(let i=0;i<(n||1);i++){updateParticles(performance.now());}composer.render();},
   setAssemble:(v)=>{assemble=v;},
   setShatter:(v)=>{shatter=v;},
-  info:()=>({count,assemble,shatter})
+  info:()=>({count,assemble,shatter}),
+  sample:()=>{const p=geo.attributes.position.array;return{
+    pos0:[p[0].toFixed(2),p[1].toFixed(2),p[2].toFixed(2)],
+    tgt0:[targets[0].toFixed(2),targets[1].toFixed(2),targets[2].toFixed(2)],
+    start0:[starts[0].toFixed(2),starts[1].toFixed(2),starts[2].toFixed(2)],
+    tgtRangeX:[Math.min(...Array.from({length:count},(_,i)=>targets[i*3])).toFixed(1),
+               Math.max(...Array.from({length:count},(_,i)=>targets[i*3])).toFixed(1)],
+    tgtRangeY:[Math.min(...Array.from({length:count},(_,i)=>targets[i*3+1])).toFixed(1),
+               Math.max(...Array.from({length:count},(_,i)=>targets[i*3+1])).toFixed(1)],
+    camZ:camera.position.z};}
 };
 // ensure font loaded then rebuild for crisp sampling
 document.fonts.ready.then(()=>{document.fonts.load("300px 'Pirata One'").then(()=>{
