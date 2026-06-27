@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEURAL BIOLUMINESCENCE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#02060c; --cyan:#22e0ff; --mag:#ff3bd0; --vio:#9b6bff;
+  --txt:#cfeefb; --mut:#5a7a8a;
+  --disp:"Syne",sans-serif; --f:"Inter",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at 50% 120%,#06223a 0%,var(--bg) 55%);
+  color:var(--txt);font-family:var(--f);overflow:hidden;-webkit-font-smoothing:antialiased}
+#net{position:fixed;inset:0;z-index:0}
+.depth{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0%,rgba(34,224,255,.06),transparent 50%);}
+
+.app{position:relative;z-index:10;height:100%;display:flex;flex-direction:column;max-width:880px;margin:0 auto;padding:0 18px}
+header{display:flex;align-items:center;gap:14px;padding:22px 6px 16px}
+.orb{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--cyan) 40%,var(--vio) 100%);
+  box-shadow:0 0 24px var(--cyan),0 0 50px rgba(155,107,255,.5);animation:pulse 2.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.12);box-shadow:0 0 36px var(--cyan),0 0 70px var(--mag)}}
+.title{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:.02em;
+  background:linear-gradient(90deg,var(--cyan),var(--mag));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:11px;color:var(--mut);letter-spacing:.18em;text-transform:uppercase}
+.keybtn{margin-left:auto;border:1px solid rgba(34,224,255,.3);background:rgba(34,224,255,.05);
+  border-radius:20px;padding:9px 15px;font-family:var(--f);font-weight:600;font-size:12px;color:var(--mut);cursor:pointer;
+  backdrop-filter:blur(10px);transition:.25s}
+.keybtn:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 20px rgba(34,224,255,.4)}
+.keybtn.live{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 18px rgba(34,224,255,.5)}
+
+.chat{flex:1;overflow-y:auto;padding:18px 6px;display:flex;flex-direction:column;gap:18px;scrollbar-width:none}
+.chat::-webkit-scrollbar{display:none}
+.msg{max-width:78%;padding:15px 19px;font-size:15px;line-height:1.65;white-space:pre-wrap;border-radius:20px;
+  position:relative;animation:rise .6s cubic-bezier(.2,1,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}}
+.msg.bot{align-self:flex-start;background:linear-gradient(160deg,rgba(34,224,255,.08),rgba(155,107,255,.05));
+  border:1px solid rgba(34,224,255,.22);box-shadow:0 0 30px rgba(34,224,255,.08),inset 0 0 30px rgba(34,224,255,.04);
+  color:var(--txt);border-bottom-left-radius:6px}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,rgba(255,59,208,.16),rgba(155,107,255,.12));
+  border:1px solid rgba(255,59,208,.3);color:#ffe6f8;border-bottom-right-radius:6px;box-shadow:0 0 24px rgba(255,59,208,.14)}
+.who{font-family:var(--disp);font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;opacity:.7}
+.msg.bot .who{color:var(--cyan)}.msg.user .who{color:var(--mag)}
+.cursor{display:inline-block;width:7px;height:15px;border-radius:2px;background:var(--cyan);margin-left:2px;
+  vertical-align:middle;box-shadow:0 0 8px var(--cyan);animation:blink .9s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.think{align-self:flex-start;display:flex;gap:7px;align-items:center;padding:14px 20px;border-radius:20px;
+  background:rgba(34,224,255,.05);border:1px solid rgba(34,224,255,.18)}
+.think span{font-size:11px;letter-spacing:.18em;color:var(--mut);text-transform:uppercase}
+.think i{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:syn 1.2s infinite}
+.think i:nth-child(2){animation-delay:.2s;background:var(--vio);box-shadow:0 0 10px var(--vio)}
+.think i:nth-child(3){animation-delay:.4s;background:var(--mag);box-shadow:0 0 10px var(--mag)}
+@keyframes syn{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.3)}}
+
+.bar{display:flex;gap:10px;padding:12px 0 24px;align-items:flex-end}
+.field-in{flex:1;display:flex;align-items:flex-end;background:rgba(6,30,48,.6);backdrop-filter:blur(14px);
+  border:1px solid rgba(34,224,255,.25);border-radius:20px;padding:4px 6px 4px 18px;transition:.25s}
+.field-in:focus-within{border-color:var(--cyan);box-shadow:0 0 28px rgba(34,224,255,.3)}
+textarea{flex:1;background:none;border:none;outline:none;resize:none;font-family:var(--f);font-size:15px;color:var(--txt);
+  padding:13px 0;max-height:120px;line-height:1.5}
+textarea::placeholder{color:var(--mut)}
+.send{width:48px;height:48px;border:none;border-radius:50%;cursor:pointer;flex:none;color:#02060c;font-size:20px;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--cyan) 45%,var(--vio));box-shadow:0 0 22px var(--cyan);transition:.2s}
+.send:hover{transform:scale(1.08);box-shadow:0 0 32px var(--mag)}.send:active{transform:scale(.92)}
+
+.modal{position:fixed;inset:0;z-index:60;background:rgba(2,6,12,.8);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.modal.on{display:flex}
+.box{width:min(440px,90vw);background:linear-gradient(160deg,rgba(6,30,48,.95),rgba(10,8,30,.95));
+  border:1px solid rgba(34,224,255,.35);border-radius:24px;padding:28px;box-shadow:0 0 60px rgba(34,224,255,.25)}
+.box h3{font-family:var(--disp);font-weight:800;font-size:17px;margin-bottom:8px;color:var(--cyan)}
+.box p{font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:18px}
+.box input{width:100%;background:rgba(2,6,12,.8);border:1px solid rgba(34,224,255,.25);border-radius:12px;
+  padding:13px 16px;font-family:var(--f);font-size:14px;outline:none;margin-bottom:16px;color:var(--txt)}
+.box input:focus{border-color:var(--cyan)}
+.box .row{display:flex;gap:10px}
+.box button{flex:1;padding:13px;border-radius:12px;font-family:var(--f);font-weight:600;font-size:13px;cursor:pointer;
+  border:1px solid rgba(34,224,255,.25);background:transparent;color:var(--txt);transition:.2s}
+.box button.go{background:linear-gradient(135deg,var(--cyan),var(--vio));color:#02060c;border:none;font-weight:600}
+.box button:hover{border-color:var(--cyan)}
+.home{position:fixed;top:20px;left:20px;z-index:50;text-decoration:none;font-size:12px;color:var(--mut);
+  border:1px solid rgba(34,224,255,.2);border-radius:20px;padding:7px 13px;backdrop-filter:blur(10px)}
+.home:hover{color:var(--cyan);border-color:var(--cyan)}
+</style>
+</head>
+<body>
+<canvas id="net"></canvas>
+<div class="depth"></div>
+<a class="home" href="index.html">← surface</a>
+
+<div class="app">
+  <header>
+    <div class="orb"></div>
+    <div><div class="title">Neural Bioluminescence</div><div class="sub">deep network · axon</div></div>
+    <button class="keybtn" id="keybtn">○ dormant</button>
+  </header>
+  <div class="chat" id="chat"></div>
+  <div class="bar">
+    <div class="field-in"><textarea id="inp" rows="1" placeholder="send a pulse into the dark..."></textarea></div>
+    <button class="send" id="send">➤</button>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <h3>Awaken the network</h3>
+    <p>Paste an Anthropic API key to think for real on <b>claude-haiku-4-5</b>. Stored only in your browser. Empty = offline brain.</p>
+    <input id="keyinp" type="password" placeholder="sk-ant-..." autocomplete="off" />
+    <div class="row"><button id="clr">Clear</button><button class="go" id="save">Connect</button></div>
+  </div>
+</div>
+
+<script src="chat-engine.js"></script>
+<script>
+/* ---- particle synapse network ---- */
+const cv=document.getElementById('net'),cx=cv.getContext('2d');
+let W,H,nodes,excite=0;
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;
+  const n=Math.min(90,Math.floor(W*H/16000));nodes=[];
+  for(let i=0;i<n;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,
+    vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.8+.7,
+    hue:Math.random()<.5?[34,224,255]:[255,59,208],ph:Math.random()*6.28});}
+resize();addEventListener('resize',resize);
+function draw(t){
+  cx.clearRect(0,0,W,H);
+  excite*=.96;
+  for(const a of nodes){
+    a.x+=a.vx*(1+excite*4);a.y+=a.vy*(1+excite*4);
+    if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1;
+  }
+  // links
+  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+    const a=nodes[i],b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
+    if(d<130){const o=(1-d/130)*(.22+excite*.5);
+      cx.strokeStyle=`rgba(${a.hue[0]},${a.hue[1]},${a.hue[2]},${o})`;
+      cx.lineWidth=.6;cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke();}
+  }
+  // nodes (glow pulse)
+  for(const a of nodes){const g=.5+.5*Math.sin(t/700+a.ph),r=a.r*(1+g*.6+excite);
+    cx.beginPath();cx.arc(a.x,a.y,r,0,6.28);
+    cx.fillStyle=`rgba(${a.hue[0]},${a.hue[1]},${a.hue[2]},${.5+g*.4})`;
+    cx.shadowBlur=10+excite*30;cx.shadowColor=`rgb(${a.hue[0]},${a.hue[1]},${a.hue[2]})`;cx.fill();}
+  cx.shadowBlur=0;requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+function fire(){excite=Math.min(1,excite+.8)}
+
+/* ---- chat wiring ---- */
+const chat=document.getElementById('chat'),inp=document.getElementById('inp'),send=document.getElementById('send'),
+keybtn=document.getElementById('keybtn'),modal=document.getElementById('modal');
+const eng=ChatEngine.create({persona:'neural',onThinking(){showThink();fire()},onToken(t){appendToken(t);if(Math.random()<.1)fire()},onDone(){hideThink();fire()}});
+
+function refreshKeyBtn(){if(eng.hasKey()){keybtn.textContent='● awake · haiku';keybtn.classList.add('live')}
+  else{keybtn.textContent='○ dormant';keybtn.classList.remove('live')}}
+refreshKeyBtn();
+function addMsg(role,text){const d=document.createElement('div');d.className='msg '+role;
+  const w=document.createElement('div');w.className='who';w.textContent=role==='bot'?eng.name:'you';
+  const c=document.createElement('div');c.textContent=text;d.append(w,c);chat.appendChild(d);scroll();return c;}
+let streamEl=null;
+function appendToken(t){if(!streamEl){streamEl=addMsg('bot','')}streamEl.append(document.createTextNode(t));scroll();}
+let thinkEl=null;
+function showThink(){thinkEl=document.createElement('div');thinkEl.className='think';
+  thinkEl.innerHTML='<i></i><i></i><i></i><span>firing synapses</span>';chat.appendChild(thinkEl);scroll();}
+function hideThink(){if(thinkEl){thinkEl.remove();thinkEl=null}streamEl=null}
+function scroll(){chat.scrollTop=chat.scrollHeight}
+async function go(){const v=inp.value.trim();if(!v)return;addMsg('user',v);fire();inp.value='';inp.style.height='auto';
+  send.disabled=true;await eng.send(v);send.disabled=false;inp.focus();}
+send.onclick=go;
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();go()}});
+inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px'});
+keybtn.onclick=()=>{document.getElementById('keyinp').value='';modal.classList.add('on')};
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('on')};
+document.getElementById('save').onclick=()=>{eng.setKey(document.getElementById('keyinp').value);refreshKeyBtn();modal.classList.remove('on')};
+document.getElementById('clr').onclick=()=>{eng.setKey('');refreshKeyBtn();modal.classList.remove('on')};
+setTimeout(()=>{addMsg('bot',eng.greet);fire()},400);
+</script>
+</body>
+</html>

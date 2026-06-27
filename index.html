@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UI_SET_2 · chatbot themes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#05060a;--txt:#e8ecf2;--mut:#7a8497;--mono:"DM Mono",monospace;--disp:"Syne",sans-serif;--f:"Inter",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:var(--f);min-height:100vh;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+.bg::before,.bg::after{content:"";position:absolute;width:60vw;height:60vw;border-radius:50%;filter:blur(130px);opacity:.3}
+.bg::before{background:radial-gradient(circle,#c7ff38,transparent 60%);top:-20vw;left:-10vw;animation:fl 14s ease-in-out infinite}
+.bg::after{background:radial-gradient(circle,#9b6bff,transparent 60%);bottom:-20vw;right:-10vw;animation:fl 18s ease-in-out infinite reverse}
+@keyframes fl{50%{transform:translate(10vw,8vh) scale(1.2)}}
+.wrap{position:relative;z-index:10;max-width:1140px;margin:0 auto;padding:70px 24px 80px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.35em;color:var(--mut);text-transform:uppercase;margin-bottom:18px}
+h1{font-family:var(--disp);font-weight:800;font-size:clamp(40px,8vw,86px);line-height:.98;letter-spacing:-.02em;margin-bottom:20px}
+h1 .g{background:linear-gradient(90deg,#c7ff38,#36f6ff,#ff3ea5,#9b6bff);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:300%;animation:hue 8s linear infinite}
+@keyframes hue{to{background-position:300%}}
+.lede{font-size:18px;color:var(--mut);max-width:560px;line-height:1.6;margin-bottom:14px}
+.note{font-family:var(--mono);font-size:12px;color:#c7ff38;opacity:.8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:22px;margin-top:56px}
+a.card{position:relative;text-decoration:none;color:inherit;border-radius:22px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.1);min-height:340px;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:26px;transition:transform .35s cubic-bezier(.2,1,.3,1),box-shadow .35s}
+a.card:hover{transform:translateY(-8px)}
+.prev{position:absolute;inset:0;z-index:0}
+/* exocortex preview */
+.c1 .prev{background:#04060a;
+  background-image:linear-gradient(rgba(199,255,56,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(199,255,56,.12) 1px,transparent 1px);
+  background-size:30px 30px}
+.c1 .prev::after{content:"";position:absolute;width:40vw;height:40vw;border-radius:50%;filter:blur(80px);
+  background:radial-gradient(circle,#c7ff38,transparent 60%);opacity:.25;top:-10vw;right:-10vw}
+.c1:hover{box-shadow:0 24px 60px rgba(199,255,56,.22)}
+/* plasma preview */
+.c2 .prev{background:#fce7ff;overflow:hidden}
+.c2 .prev i{position:absolute;border-radius:50%;filter:blur(36px);mix-blend-mode:screen;opacity:.9;animation:fl 12s ease-in-out infinite}
+.c2 .prev i:nth-child(1){width:60%;height:60%;background:radial-gradient(circle,#ff4ecd,transparent 65%);top:-10%;left:-10%}
+.c2 .prev i:nth-child(2){width:55%;height:55%;background:radial-gradient(circle,#4e7bff,transparent 65%);bottom:-10%;right:-5%;animation-delay:-4s}
+.c2 .prev i:nth-child(3){width:45%;height:45%;background:radial-gradient(circle,#39e6c8,transparent 65%);bottom:10%;left:25%;animation-delay:-8s}
+.c2:hover{box-shadow:0 24px 60px rgba(180,80,220,.3)}
+.c2 .meta,.c2 h2{color:#0b0a18}.c2 .tag{border-color:rgba(11,10,24,.2);color:#0b0a18}
+/* neural preview */
+.c3 .prev{background:radial-gradient(ellipse at 50% 120%,#06223a,#02060c 60%)}
+.c3 .prev::after{content:"";position:absolute;inset:0;
+  background-image:radial-gradient(circle,#22e0ff 1px,transparent 1.5px),radial-gradient(circle,#ff3bd0 1px,transparent 1.5px);
+  background-size:54px 54px,80px 80px;background-position:0 0,30px 30px;opacity:.4}
+.c3:hover{box-shadow:0 24px 60px rgba(34,224,255,.25)}
+.meta{position:relative;z-index:2}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 12px;margin-bottom:14px;color:var(--txt)}
+h2{font-family:var(--disp);font-weight:800;font-size:27px;letter-spacing:-.01em;margin-bottom:8px}
+.desc{font-size:14px;color:rgba(255,255,255,.7);line-height:1.5}
+.c2 .desc{color:rgba(11,10,24,.7)}
+.enter{margin-top:16px;font-family:var(--mono);font-size:13px;display:flex;align-items:center;gap:8px;opacity:.85}
+.foot{margin-top:70px;font-family:var(--mono);font-size:12px;color:var(--mut);line-height:1.8}
+.foot b{color:#c7ff38}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <div class="eyebrow">ui_set_2 — chatbot theme pack</div>
+  <h1>three <span class="g">unhinged</span><br>chat interfaces.</h1>
+  <p class="lede">Three fully usable AI chat UIs, each pushed way past tasteful. Type to see streaming responses out of the box — or paste an Anthropic key to run live on Claude.</p>
+  <p class="note">offline brain by default · bring-your-own-key for real replies</p>
+
+  <div class="grid">
+    <a class="card c1" href="exocortex.html">
+      <div class="prev"></div>
+      <div class="meta">
+        <span class="tag">01 · dark hud</span>
+        <h2>Exocortex Overdrive</h2>
+        <p class="desc">CRT scanlines, glitch text, boot sequence, acid-green terminal that pulses on every message.</p>
+        <div class="enter">enter ▸</div>
+      </div>
+    </a>
+    <a class="card c2" href="plasma.html">
+      <div class="prev"><i></i><i></i><i></i></div>
+      <div class="meta">
+        <span class="tag">02 · liquid glass</span>
+        <h2>Liquid Plasma</h2>
+        <p class="desc">Morphing iridescent blobs behind frosted panels. Springy, wet, alive. Everything flows.</p>
+        <div class="enter">enter ▸</div>
+      </div>
+    </a>
+    <a class="card c3" href="neural.html">
+      <div class="prev"></div>
+      <div class="meta">
+        <span class="tag">03 · deep network</span>
+        <h2>Neural Bioluminescence</h2>
+        <p class="desc">A living particle synapse net in the deep dark. Synapses fire when the bot thinks.</p>
+        <div class="enter">enter ▸</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="foot">
+    built for <b>nk.shekhar</b> · static, self-contained, zero backend<br>
+    to go live: open any theme → key icon → paste <b>sk-ant-...</b> → chats on claude-haiku-4-5
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LIQUID PLASMA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --txt:#0b0a18; --txt-soft:#4a4668; --glass:rgba(255,255,255,.38);
+  --glass-line:rgba(255,255,255,.7); --bot:rgba(255,255,255,.55);
+  --f:"Manrope",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--f);color:var(--txt);overflow:hidden;background:#fce7ff;-webkit-font-smoothing:antialiased}
+/* animated plasma field */
+.field{position:fixed;inset:0;z-index:0;filter:blur(60px) saturate(1.4);overflow:hidden}
+.blob{position:absolute;border-radius:50%;mix-blend-mode:screen;opacity:.85;
+  animation:float 16s ease-in-out infinite}
+.b1{width:55vw;height:55vw;background:radial-gradient(circle,#ff4ecd,#ff4ecd00 65%);top:-10%;left:-8%}
+.b2{width:50vw;height:50vw;background:radial-gradient(circle,#4e7bff,#4e7bff00 65%);bottom:-12%;right:-6%;animation-delay:-3s}
+.b3{width:46vw;height:46vw;background:radial-gradient(circle,#39e6c8,#39e6c800 65%);bottom:-8%;left:18%;animation-delay:-7s}
+.b4{width:40vw;height:40vw;background:radial-gradient(circle,#ffd24e,#ffd24e00 65%);top:5%;right:8%;animation-delay:-11s}
+.b5{width:38vw;height:38vw;background:radial-gradient(circle,#b14eff,#b14eff00 65%);top:35%;left:35%;animation-delay:-5s}
+@keyframes float{
+  0%,100%{transform:translate(0,0) scale(1)}
+  25%{transform:translate(8vw,-6vh) scale(1.18)}
+  50%{transform:translate(-5vw,9vh) scale(.9)}
+  75%{transform:translate(6vw,5vh) scale(1.1)}
+}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.app{position:relative;z-index:10;height:100%;display:flex;flex-direction:column;max-width:880px;margin:0 auto;padding:0 18px}
+header{display:flex;align-items:center;gap:14px;padding:22px 6px 16px}
+.mark{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,#ff4ecd,#4e7bff);
+  box-shadow:0 8px 26px rgba(120,80,255,.4),inset 0 1px 2px rgba(255,255,255,.6);animation:wob 5s ease-in-out infinite}
+@keyframes wob{50%{border-radius:18px 12px 20px 12px;transform:rotate(8deg)}}
+.title{font-weight:800;font-size:20px;letter-spacing:-.02em;background:linear-gradient(90deg,#ff4ecd,#4e7bff,#39e6c8);
+  -webkit-background-clip:text;background-clip:text;color:transparent;background-size:200%;animation:hue 6s linear infinite}
+@keyframes hue{to{background-position:200%}}
+.sub{font-size:12px;color:var(--txt-soft);font-weight:500}
+.keybtn{margin-left:auto;border:1px solid var(--glass-line);background:var(--glass);backdrop-filter:blur(16px);
+  border-radius:14px;padding:9px 14px;font-family:var(--f);font-weight:700;font-size:12px;color:var(--txt);cursor:pointer;
+  box-shadow:0 6px 20px rgba(120,80,255,.15);transition:.25s}
+.keybtn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(120,80,255,.28)}
+.keybtn.live{background:linear-gradient(135deg,#39e6c8,#4e7bff);color:#fff}
+
+.chat{flex:1;overflow-y:auto;padding:18px 6px;display:flex;flex-direction:column;gap:16px;scrollbar-width:none}
+.chat::-webkit-scrollbar{display:none}
+.msg{max-width:76%;padding:15px 19px;font-size:15px;line-height:1.6;white-space:pre-wrap;
+  backdrop-filter:blur(22px);box-shadow:0 10px 34px rgba(80,60,160,.16),inset 0 1px 1px rgba(255,255,255,.65);
+  border:1px solid var(--glass-line);animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.96)}}
+.msg.bot{align-self:flex-start;background:var(--bot);border-radius:24px 24px 24px 6px;color:var(--txt)}
+.msg.user{align-self:flex-end;color:#fff;border-radius:24px 24px 6px 24px;border:none;
+  background:linear-gradient(135deg,#ff4ecd,#7b5bff);box-shadow:0 10px 30px rgba(180,80,220,.4)}
+.who{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.6;margin-bottom:5px}
+.cursor{display:inline-block;width:7px;height:16px;border-radius:3px;background:currentColor;margin-left:2px;vertical-align:middle;animation:blink .9s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.think{align-self:flex-start;display:flex;gap:6px;align-items:center;padding:14px 20px;border-radius:24px;
+  background:var(--bot);backdrop-filter:blur(20px);border:1px solid var(--glass-line)}
+.think i{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#ff4ecd,#4e7bff);animation:tk 1.1s infinite}
+.think i:nth-child(2){animation-delay:.18s}.think i:nth-child(3){animation-delay:.36s}
+@keyframes tk{0%,100%{transform:translateY(0) scale(.8);opacity:.4}50%{transform:translateY(-6px) scale(1.2);opacity:1}}
+
+.bar{display:flex;gap:10px;padding:12px 0 24px;align-items:flex-end}
+.field-in{flex:1;display:flex;align-items:flex-end;background:var(--glass);backdrop-filter:blur(22px);
+  border:1px solid var(--glass-line);border-radius:22px;padding:6px 8px 6px 18px;
+  box-shadow:0 10px 30px rgba(80,60,160,.16),inset 0 1px 1px rgba(255,255,255,.7);transition:.25s}
+.field-in:focus-within{transform:translateY(-2px);box-shadow:0 14px 38px rgba(120,80,255,.28)}
+textarea{flex:1;background:none;border:none;outline:none;resize:none;font-family:var(--f);font-size:15px;
+  color:var(--txt);padding:13px 0;max-height:120px;line-height:1.5;font-weight:500}
+textarea::placeholder{color:var(--txt-soft)}
+.send{width:50px;height:50px;border:none;border-radius:18px;cursor:pointer;flex:none;
+  background:linear-gradient(135deg,#ff4ecd,#4e7bff);color:#fff;font-size:20px;transition:.2s;
+  box-shadow:0 8px 24px rgba(140,80,230,.45)}
+.send:hover{transform:translateY(-2px) rotate(-6deg)}.send:active{transform:scale(.92)}
+
+.modal{position:fixed;inset:0;z-index:60;background:rgba(40,20,70,.35);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.modal.on{display:flex}
+.box{width:min(440px,90vw);background:var(--glass);backdrop-filter:blur(30px);border:1px solid var(--glass-line);
+  border-radius:26px;padding:28px;box-shadow:0 30px 80px rgba(80,40,140,.4)}
+.box h3{font-weight:800;font-size:17px;margin-bottom:8px}
+.box p{font-size:13px;color:var(--txt-soft);line-height:1.6;margin-bottom:18px;font-weight:500}
+.box input{width:100%;background:rgba(255,255,255,.6);border:1px solid var(--glass-line);border-radius:14px;
+  padding:13px 16px;font-family:var(--f);font-size:14px;outline:none;margin-bottom:16px;color:var(--txt)}
+.box .row{display:flex;gap:10px}
+.box button{flex:1;padding:13px;border-radius:14px;font-family:var(--f);font-weight:700;font-size:13px;cursor:pointer;
+  border:1px solid var(--glass-line);background:rgba(255,255,255,.5);color:var(--txt);transition:.2s}
+.box button.go{background:linear-gradient(135deg,#ff4ecd,#4e7bff);color:#fff;border:none}
+.box button:hover{transform:translateY(-1px)}
+.home{position:fixed;top:20px;left:20px;z-index:50;text-decoration:none;font-size:12px;font-weight:700;color:var(--txt);
+  background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--glass-line);border-radius:12px;padding:7px 12px}
+</style>
+</head>
+<body>
+<div class="field"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div><div class="blob b5"></div></div>
+<div class="grain"></div>
+<a class="home" href="index.html">← back</a>
+
+<div class="app">
+  <header>
+    <div class="mark"></div>
+    <div>
+      <div class="title">Liquid Plasma</div>
+      <div class="sub">everything flows · v2.0</div>
+    </div>
+    <button class="keybtn" id="keybtn">○ offline</button>
+  </header>
+  <div class="chat" id="chat"></div>
+  <div class="bar">
+    <div class="field-in">
+      <textarea id="inp" rows="1" placeholder="say something to plasma..."></textarea>
+    </div>
+    <button class="send" id="send">↑</button>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <h3>Go live ✨</h3>
+    <p>Paste an Anthropic API key to chat for real on <b>claude-haiku-4-5</b>. Stored only in your browser. Empty = offline brain.</p>
+    <input id="keyinp" type="password" placeholder="sk-ant-..." autocomplete="off" />
+    <div class="row"><button id="clr">Clear</button><button class="go" id="save">Connect</button></div>
+  </div>
+</div>
+
+<script src="chat-engine.js"></script>
+<script>
+const chat=document.getElementById('chat'),inp=document.getElementById('inp'),send=document.getElementById('send'),
+keybtn=document.getElementById('keybtn'),modal=document.getElementById('modal');
+const eng=ChatEngine.create({persona:'plasma',onThinking:showThink,onToken:appendToken,onDone:hideThink});
+
+function refreshKeyBtn(){if(eng.hasKey()){keybtn.textContent='● live · haiku';keybtn.classList.add('live')}
+  else{keybtn.textContent='○ offline';keybtn.classList.remove('live')}}
+refreshKeyBtn();
+
+function addMsg(role,text){const d=document.createElement('div');d.className='msg '+role;
+  const w=document.createElement('div');w.className='who';w.textContent=role==='bot'?eng.name:'you';
+  const c=document.createElement('div');c.textContent=text;d.append(w,c);chat.appendChild(d);scroll();return c;}
+let streamEl=null;
+function appendToken(t){if(!streamEl){streamEl=addMsg('bot','')}streamEl.append(document.createTextNode(t));scroll();}
+let thinkEl=null;
+function showThink(){thinkEl=document.createElement('div');thinkEl.className='think';
+  thinkEl.innerHTML='<i></i><i></i><i></i>';chat.appendChild(thinkEl);scroll();}
+function hideThink(){if(thinkEl){thinkEl.remove();thinkEl=null}streamEl=null}
+function scroll(){chat.scrollTop=chat.scrollHeight}
+
+async function go(){const v=inp.value.trim();if(!v)return;addMsg('user',v);inp.value='';inp.style.height='auto';
+  send.disabled=true;await eng.send(v);send.disabled=false;inp.focus();}
+send.onclick=go;
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();go()}});
+inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px'});
+
+keybtn.onclick=()=>{document.getElementById('keyinp').value='';modal.classList.add('on')};
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('on')};
+document.getElementById('save').onclick=()=>{eng.setKey(document.getElementById('keyinp').value);refreshKeyBtn();modal.classList.remove('on')};
+document.getElementById('clr').onclick=()=>{eng.setKey('');refreshKeyBtn();modal.classList.remove('on')};
+
+setTimeout(()=>addMsg('bot',eng.greet),300);
+</script>
+</body>
+</html>
