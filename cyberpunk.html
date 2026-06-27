@@ -272,7 +272,7 @@ function finishBoot(){
 
 /* ================= three.js particle hero ================= */
 const canvas=document.getElementById('gl');
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,preserveDrawingBuffer:true});
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.setSize(innerWidth,innerHeight);
 const scene=new THREE.Scene();
@@ -399,22 +399,6 @@ function loop(t){
   frames++;if(t-fpsT>500){const fps=Math.round(frames*1000/(t-fpsT));document.getElementById('hud-fps').textContent=fps;frames=0;fpsT=t;}
 }
 buildParticles();
-// debug hook: force a synchronous frame (used to verify render when rAF is paused)
-window.__exo={
-  step:(n)=>{for(let i=0;i<(n||1);i++){updateParticles(performance.now());}composer.render();},
-  setAssemble:(v)=>{assemble=v;},
-  setShatter:(v)=>{shatter=v;},
-  info:()=>({count,assemble,shatter}),
-  sample:()=>{const p=geo.attributes.position.array;return{
-    pos0:[p[0].toFixed(2),p[1].toFixed(2),p[2].toFixed(2)],
-    tgt0:[targets[0].toFixed(2),targets[1].toFixed(2),targets[2].toFixed(2)],
-    start0:[starts[0].toFixed(2),starts[1].toFixed(2),starts[2].toFixed(2)],
-    tgtRangeX:[Math.min(...Array.from({length:count},(_,i)=>targets[i*3])).toFixed(1),
-               Math.max(...Array.from({length:count},(_,i)=>targets[i*3])).toFixed(1)],
-    tgtRangeY:[Math.min(...Array.from({length:count},(_,i)=>targets[i*3+1])).toFixed(1),
-               Math.max(...Array.from({length:count},(_,i)=>targets[i*3+1])).toFixed(1)],
-    camZ:camera.position.z};}
-};
 // ensure font loaded then rebuild for crisp sampling
 document.fonts.ready.then(()=>{document.fonts.load("300px 'Pirata One'").then(()=>{
   scene.remove(points);scene.remove(reflect);buildParticles();});});
